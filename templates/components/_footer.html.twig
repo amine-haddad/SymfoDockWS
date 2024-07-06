@@ -1,0 +1,21 @@
+<footer class="footer mt-auto py-3 bg-dark text-white">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-md-4">
+                <p>&copy; {{ "now"|date("Y") }} Wild Series Docker. Tous droits réservés.</p>
+            </div>
+            <div class="col-md-4">
+                <p id="current-date"></p>
+                <p id="current-time"></p>
+            </div>
+            <div class="col-md-4">
+                <p>
+                    <a href="{{ path('app_index') }}" class="text-white">Accueil</a> |
+                    <a href="{{ path('category_index') }}" class="text-white">Catégories</a> |
+                    <a href="{{ path('program_index') }}" class="text-white">Séries</a>
+                </p>
+            </div>
+        </div>
+        <div id="clock" class="text-white mt-2"></div>
+    </div>
+</footer>

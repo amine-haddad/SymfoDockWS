@@ -1,18 +1,31 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" type="image/png" href="{{ asset('images/duck.png') }}">
-        {% block stylesheets %}
-        {% endblock %}
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Welcome!
+			{% endblock %}
+		</title>
+		<link rel="icon" type="image/png" href="{{ asset('images/duck.png') }}"> {% block stylesheets %}{% endblock %}
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-    {% include "/components/_navbar.html.twig" %}
-        {% block body %}{% endblock %}
-    </body>
-</html>
+		{% block javascripts %}
+			{% block importmap %}
+				{{ importmap('app') }}
+				{{ encore_entry_script_tags('app') }}
+			{% endblock %}
+		{% endblock %}
+	</head>
+	<body>
+		<header>
+			{# Le contenu de votre header si nécessaire #}
+			
+		</header>
+		{% include "/components/_navbar.html.twig" %}
+		<main class="flex-shrink-0"> {% block body %}{% endblock %}
+			</main>
+
+			<footer>
+				{% include '/components/_footer.html.twig' %}
+			</footer>
+		</body>
+	</html>

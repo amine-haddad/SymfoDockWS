@@ -1,38 +1,56 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Category:
-	{{ categoryName }}
-{% endblock %}
+{% block title %}Category: {{ category.name }}{% endblock %}
 
 {% block body %}
-	<h3>Category:
-		{{ categoryName }}
-		<li>
-			{% for program in programs %}
-				<a href="{{ path('program_show', { 'id': program.id }) }}" class="btn btn-primary">
-					<span>{{ program.title }}-</span>
-				</a>
-			{% endfor %}
-		</li>
-	</h3>
+    <!-- Display the name of the current category -->
+    <h3>Category: {{ category.name }}</h3>
+    
+    <!-- List of programs under the current category -->
+    <div class="program-list">
+        <h2>Programs</h2>
+        <ul>
+            <!-- Loop through the programs and display their details -->
+            {% for program in programs %}
+                <li>
+                    <div>
+                        <!-- Link to the program details page -->
+                        <a href="{{ path('program_show', { 'id': program.id }) }}" class="btn btn-primary">
+                            <h1>{{ program.title }}</h1>
+                        </a>
+                        <!-- Program synopsis -->
+                        <p>{{ program.synopsis }}</p>
+                    </div>
+                </li>
+            <!-- If no programs are found, display a message -->
+            {% else %}
+                <li>No programs found for category: {{ category.name }}.</li>
+            {% endfor %}
+        </ul>
+    </div>
 
-	<h2>Programs</h2>
-	<ul>
-		{% for program in programs %}
-			<div>
-				<a href="{{ path('program_show', { 'id': program.id }) }}" class="btn btn-primary">
-					<span>{{ program.id }}</span>
-					<h1>{{ program.title }}</h1>
-				</a>
-				<p>{{ program.synopsis }}</p>
-				<a href="{{ path('category_index') }}" class="btn btn-secondary">
-					<span>{{ program.category.name }}</span>
-				</a>
-			{% else %}
-				<li>No programs found for category :
-					{{ program.category.name }}.</li>
-			</div>
-		{% endfor %}
-	</ul>
-	<a href="{{ path('category_index') }}" class="btn btn-secondary">Back to Categories</a>
+    <!-- Navigation buttons for previous, all categories, and next categories -->
+    <div class="btn-group mt-3" role="group">
+        <!-- Link to the previous category -->
+        {% if previousCategory %}
+            <a href="{{ path('category_show', { categoryName: previousCategory.name }) }}" class="btn btn-secondary">Previous</a>
+        <!-- If no previous category, disable the button -->
+        {% else %}
+            <button class="btn btn-secondary" disabled>Previous</button>
+        {% endif %}
+
+        <!-- Link to all categories -->
+        <a href="{{ path('category_index') }}" class="btn btn-secondary">All Categories</a>
+
+        <!-- Link to the next category -->
+        {% if nextCategory %}
+            <a href="{{ path('category_show', { categoryName: nextCategory.name }) }}" class="btn btn-secondary">Next</a>
+        <!-- If no next category, disable the button -->
+        {% else %}
+            <button class="btn btn-secondary" disabled>Next</button>
+        {% endif %}
+    </div>
+
+    <!-- Link to all categories -->
+    <a href="{{ path('category_index') }}" class="btn btn-secondary mt-3">Back to Categories</a>
 {% endblock %}

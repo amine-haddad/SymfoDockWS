@@ -1,5 +1,7 @@
 <?php
 
+// src/Controller/CategoryController.php
+
 namespace App\Controller;
 
 use App\Entity\Category;
@@ -8,7 +10,7 @@ use App\Repository\ProgramRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/category', name: 'category_')]
 class CategoryController extends AbstractController
@@ -16,8 +18,6 @@ class CategoryController extends AbstractController
     #[Route('/', name: 'index', methods: 'GET')]
     public function index(CategoryRepository $categoryRepository): Response
     {
-        $action = $categoryRepository->findBy(['name' => 'action']);
-        //dd($action);
         $categories = $categoryRepository->findAll();
         return $this->render('category/index.html.twig', [
             'controller_name' => 'CategoryController',
@@ -26,8 +26,13 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/{categoryName}', name: 'show', methods: ['GET'])]
-    public function show(string $categoryName, CategoryRepository $categoryRepository, EntityManagerInterface $programs, ProgramRepository $programRepository): Response
+    public function show(
+        string $categoryName, 
+        CategoryRepository $categoryRepository, 
+        ProgramRepository $programRepository
+    ): Response
     {
+        $categories = $categoryRepository->findAll();
         $category = $categoryRepository->findOneBy(['name' => $categoryName]);
 
         if (!$category) {
@@ -35,21 +40,25 @@ class CategoryController extends AbstractController
                 'No category : ' . $categoryName . ' found in category\'s table.'
             );
         }
-        //dd($categoryName);
+
+        // Find the index of the current category
+        $currentIndex = array_search($category, $categories);
+
+        // Determine the previous and next categories
+        $previousCategory = $currentIndex > 0 ? $categories[$currentIndex - 1] : null;
+        $nextCategory = $currentIndex < count($categories) - 1 ? $categories[$currentIndex + 1] : null;
+
         $programs = $programRepository->findBy(
             ['category' => $category],
-            ['id' => 'DESC'],// affiche les 3 dernier serie ajouter
-            3 //limite de resultat affiche juste 3 series
+            ['id' => 'DESC'], // sort by newest
+            3 // limit to 3 results
         );
-        if (count($programs) === 0) {
-            throw $this->createNotFoundException(
-                'No programs in this category :' . $categoryName . ' found in category\'s table.'
-            );
-        }
-        //dd($programs);
+
         return $this->render('category/show.html.twig', [
-            'categoryName' => $categoryName,
+            'category' => $category,
             'programs' => $programs,
+            'previousCategory' => $previousCategory,
+            'nextCategory' => $nextCategory,
         ]);
     }
 }

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Category:
+	{{ categoryName }}
+{% endblock %}
+
+{% block body %}
+	<h3>Category:
+		{{ categoryName }}
+		<li>
+			{% for program in programs %}
+				<a href="{{ path('program_show', { 'id': program.id }) }}" class="btn btn-primary">
+					<span>{{ program.title }}-</span>
+				</a>
+			{% endfor %}
+		</li>
+	</h3>
+
+	<h2>Programs</h2>
+	<ul>
+		{% for program in programs %}
+			<div>
+				<a href="{{ path('program_show', { 'id': program.id }) }}" class="btn btn-primary">
+					<span>{{ program.id }}</span>
+					<h1>{{ program.title }}</h1>
+				</a>
+				<p>{{ program.synopsis }}</p>
+				<a href="{{ path('category_index') }}" class="btn btn-secondary">
+					<span>{{ program.category.name }}</span>
+				</a>
+			{% else %}
+				<li>No programs found for category :
+					{{ program.category.name }}.</li>
+			</div>
+		{% endfor %}
+	</ul>
+	<a href="{{ path('category_index') }}" class="btn btn-secondary">Back to Categories</a>
+{% endblock %}

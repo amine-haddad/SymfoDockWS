@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wild Series
+{% endblock %}
+
+{% block body %}
+	<div class="card" style="width: 18rem;">
+		<img src="{{ asset('images/duck.png') }}" alt=""/>
+		<div class="card-body">
+			<h5 class="card-title">
+				<h1>
+					Bienvenue sur
+					{{ website }}</h1>
+			</h5>
+			<p class="card-text">DUCKY</p>
+			<a href="{{ path('program_index') }}" class="btn btn-outline-dark">VOIR SERIES</a>
+		</div>
+	</div>
+{% endblock %}

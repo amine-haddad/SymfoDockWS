@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wild Series{% endblock %}
+
+{% block body %}
+<h1>Page number {{ page }}.</h1>
+<a href="{{ path('program_show', {id: 4}) }}" class="btn btn-outline-light" >voir la serie</a>
+<a href="{{ path('app_index') }}" class="btn btn-outline-light">return index</a>
+
+{% endblock %}

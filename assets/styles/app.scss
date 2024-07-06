@@ -1,0 +1,5 @@
+$primary: #8302ab;
+@import '../../vendor/twbs/bootstrap/scss/bootstrap';
+body {
+    background-color: $primary;
+}

@@ -1,0 +1,54 @@
+{% extends "base.html.twig" %}
+{% block body %}
+{#{{ dump(episodes)}}#}
+{#{{ dump(program)}}#}
+	<div class="media">
+		{#<img class="align-self-start mr-3" src="{{program.poster}}" alt="{{ program.title }} poster">#}
+		<div class="media-body">
+			<h1 class="mt-0">{{ programs.title }}</h1>
+			<p>{{ programs.summary }}</p>
+			<p>Catégorie :
+				{{ programs.category.name }}</p>
+		</div>
+		<div class="container-fluid">
+			<p>
+				id de la saison :{{seasons.id}}</p>
+			<p>
+				nom de la serie :{{seasons.program.title}}</p>
+			<p>Saison :{{seasons.number}}</p>
+			<p>Année de sortie :{{ season.year}}</p>
+			<p>Desciption
+				{{seasons.description}}</p>
+
+			{% for episode in episodes %}
+				<div class="container-fluid">
+					<divclass="rowm-5">
+						<div class="col">
+							<h1>
+								Titre :
+								{{episode.title}}</h1>
+							<p>
+								indice de l episodes :
+								{{episode.id}}</p>
+
+							Episode :
+							{{episode.number}}
+							<p>Synopsys :{{episode.synopsis}}</p>
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+      	<div>
+				<a href="{{ path('program_episode_show',{ id: programs.id , id: seasons.id, id: episode.title }) }}">
+					Voir le film
+				</a>
+			</div>
+			<div>
+				<a href="{{ path('program_show', { slug: program.slug }) }}">
+					Retour aux saisons
+				</a>
+			</div>
+		{% endfor %}
+	{% endblock %}

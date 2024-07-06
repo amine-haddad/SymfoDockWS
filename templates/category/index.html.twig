@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wild Series{% endblock %}
+
+{% block body %}
+<h1>categories index</h1>
+<h1>Toutes les catégories des series : </h1>
+    {% for category in categories %}
+        <div>
+            <h2>{{ loop.index }} /Catégorie : {{category.name }}</h2>
+            {# Lien vers la fiche de la série : #}
+            <a href="{{ path("category_show", { categoryName: category.name }) }}" class="btn btn-outline-dark">Series {{ category.name }}</a>
+    {% else %}
+        Aucune série trouvée.
+    {% endfor %}
+
+    <a href="{{ path('app_index') }}">
+        Retour à l'accueil
+    </a>
+{% endblock %}

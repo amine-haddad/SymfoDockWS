@@ -3,37 +3,46 @@
 {% block title %}Wild Series - Épisode {{ episode.number }}{% endblock %}
 
 {% block body %}
-<div class="card">
-    <div class="row">
-        <div class="col-md-4">
-            {% if program.poster %}
-                <img src="{{ asset ('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid rounded" alt="{{ program.title }}">
-                {#<img src="{{ program.poster }}" class="img-fluid rounded" alt="Affiche de l'épisode {{ episode.title }}">#}
-            {% else %}
-            <img src="{{ asset ('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid rounded" alt="{{ program.title }}">
-               {# <img src="/path/to/default/poster.jpg" class="img-fluid rounded" alt="Affiche de l'épisode par défaut">#}
-            {% endif %}
+    <!-- Display a card with episode details -->
+    <div class="card">
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Display program poster if available, else default image -->
+                {% if program.poster %}
+                    <img src="{{ asset('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid rounded" alt="{{ program.title }}">
+                    <!-- <img src="{{ program.poster }}" class="img-fluid rounded" alt="Affiche de l'épisode {{ episode.title }}"> -->
+                {% else %}
+                    <img src="{{ asset('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid rounded" alt="{{ program.title }}">
+                    <!-- <img src="/path/to/default/poster.jpg" class="img-fluid rounded" alt="Affiche de l'épisode par défaut"> -->
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <!-- Display program title, season number, episode number, and title -->
+                <h1>Titre : {{ program.title }}</h1>
+                <h3>Saison : {{ season.number }}</h3>
+                <h2>Épisode : {{ episode.number }} / Titre : {{ episode.title }}</h2>
+                <p>Synopsis :</p>
+                <p>{{ episode.synopsis }}</p>
+            </div>
         </div>
-        <div class="col-md-8">
-            <h1>Titre : {{ program.title }}</h1>
-            <h3>Saison : {{ season.number }}</h3>
-            <h2>Épisode : {{ episode.number }} / Titre : {{ episode.title }}</h2>
-            <p>Synopsis :</p>
-            <p>{{ episode.synopsis }}</p>
+        <div class="row">
+            <div class="col">
+                <!-- Display a link to return to the season page -->
+                {#{% if episode.videoUrl %}
+                    <video controls>
+                        <source src="{{ asset(episode.videoUrl) }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                {% else %}
+                    <p>La vidéo n'est pas disponible pour cet épisode.</p>
+                {% endif %}#}
+                <a href="{{ path('program_season_show', { programId: program.id, seasonId: season.id }) }}" class="btn btn-outline-dark">Retour à la saison</a>
+            </div>
+            <div class="col">
+                <!-- Display a link to the video playback page -->
+                <!-- Lien vers la page de lecture de la vidéo -->
+                <a href="{{ path('program_episode_show', { programId: program.id, seasonId: season.id, episodeId: episode.id }) }}" class="btn btn-primary">Voir la vidéo</a>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            <a href="{{ path('program_season_show', { programId: program.id, seasonId: season.id }) }}" class="btn btn-outline-dark">
-                Retour à la saison
-            </a>
-        </div>
-        <div class="col">
-            {# Lien vers la page de lecture de la vidéo #}
-            <a href="{{ path('program_episode_show', { programId: program.id, seasonId: season.id, episodeId: episode.id }) }}" class="btn btn-primary">
-                Voir la vidéo
-            </a>
-        </div>
-    </div>
-</div>
 {% endblock %}

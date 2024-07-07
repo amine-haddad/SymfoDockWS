@@ -1,22 +1,44 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Wild Series{% endblock %}
+{% block title %}Wild Series Programs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('build/css/app.scss') }}">
+{% endblock %}
 
 {% block body %}
-<h1>{{ website }} program index</h1>
-<h1>Toutes les séries de la table program : </h1>
-    {% for program in programs %}
-        <div>
-            <h2>{{ loop.index }} / {{ program.title }} - Catégorie : {{ program.category.name }}</h2>
-            <p>{{ program.synopsis }}</p>
-            {# Lien vers la fiche de la série : #}
-            <a href="{{ path("program_show", { id: program.id }) }}" class="btn btn-outline-dark">Voir la fiche</a>
-        </div>
-    {% else %}
-        Aucune série trouvée.
-    {% endfor %}
+<h1>{{ website }} - Programs</h1>
+<h2>Toutes les séries:</h2>
 
-    <a href="{{ path('app_index') }}">
-        Retour à l'accueil
-    </a>
+<div class="container">
+    <div class="row">
+        {% if programs is not empty %}
+            {% for program in programs %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-inner">
+                            <div class="card-front">
+                            <h5 class="card-title">{{ program.title }}</h5>
+                                <img src="{{ asset ('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid rounded" alt="{{ program.title }}">
+                                {# Placeholder for the image, update src attribute once you have images #}
+                                {#<img src="{{ asset( program.poster) }}" class="card-img-top" alt="{{ program.title }}">#}
+                            </div>
+                            <div class="card-back">
+                                <h5 class="card-title">{{ program.title }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Catégorie : {{ program.category.name }}</h6>
+                                <p class="card-text">{{ program.synopsis }}</p>
+                                <a href="{{ path('program_show', { id: program.id }) }}" class="btn btn-outline-dark mt-3">Voir la fiche</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucune série trouvée.</p>
+        {% endif %}
+    </div>
+</div>
+
+<a href="{{ path('app_index') }}" class="btn btn-secondary mt-3">Retour à l'accueil</a>
 {% endblock %}

@@ -1,19 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Wild Series
-{% endblock %}
+{% block title %}Wild Series{% endblock %}
 
 {% block body %}
-	<div class="card" style="width: 18rem;">
-		<img src="{{ asset('images/duck.png') }}" alt=""/>
-		<div class="card-body">
-			<h5 class="card-title">
-				<h1>
-					Bienvenue sur
-					{{ website }}</h1>
-			</h5>
-			<p class="card-text">DUCKY</p>
-			<a href="{{ path('program_index') }}" class="btn btn-outline-dark">VOIR SERIES</a>
-		</div>
-	</div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <img src="{{ asset('images/duck.png') }}" class="card-img-top img-fluid" alt="Ducky Image">
+                <div class="card-body">
+                    <h2 class="card-title text-center">Bienvenue sur {{ website }}</h2>
+                    <p class="card-text text-center">DUCKY</p>
+                    <div class="text-center">
+                        <a href="{{ path('program_index') }}" class="btn btn-outline-dark">Voir les séries</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

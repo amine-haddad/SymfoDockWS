@@ -1,20 +1,35 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Wild Series{% endblock %}
+{% block title %}Wild Series Categories
+{% endblock %}
 
 {% block body %}
-<h1>categories index</h1>
-<h1>Toutes les catégories des series : </h1>
-    {% for category in categories %}
-        <div>
-            <h2>{{ loop.index }} /Catégorie : {{category.name }}</h2>
-            {# Lien vers la fiche de la série : #}
-            <a href="{{ path("category_show", { categoryName: category.name }) }}" class="btn btn-outline-dark">Series {{ category.name }}</a>
-    {% else %}
-        Aucune série trouvée.
-    {% endfor %}
+    <h1>Categories Index</h1>
+    <h2>Toutes les catégories des séries :</h2>
 
-    <a href="{{ path('app_index') }}">
+    <div class="container">
+        <div class="row category-list">
+            <!-- Display categories if they exist -->
+            {% if categories is not empty %}
+                {% for category in categories %}
+                    <div class="col-md-3 category-item mb-3">
+                        <h3>
+                            <!-- Link to the category show page -->
+                            <a href="{{ path('category_show', { categoryName: category.name }) }}" class="btn btn-outline-dark w-100 text-center">
+                                {{ category.name }}
+                            </a>
+                        </h3>
+                    </div>
+                {% endfor %}
+            <!-- Display a message if no categories are found -->
+            {% else %}
+                <p>Aucune catégorie trouvée.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Link back to the home page -->
+    <a href="{{ path('app_index') }}" class="btn btn-secondary mt-3">
         Retour à l'accueil
     </a>
 {% endblock %}

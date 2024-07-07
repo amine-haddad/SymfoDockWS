@@ -89,13 +89,13 @@ body {
     width: 100%;
     height: auto;
     max-height: 150px;
-    object-fit: cover;
-    border-bottom: 1px solid #ddd;
     object-fit: contain;
+    border-bottom: 1px solid #ddd;
 }
 
 // Responsive image class
 .img-fluid {
+    object-fit: contain;
     max-width: 100%;
     height: auto;
 }

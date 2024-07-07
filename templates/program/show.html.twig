@@ -3,34 +3,43 @@
 {% block title %}Série #{{ program.id }}{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-4">
-            <img src="{{ asset ('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid rounded" alt="{{ program.title }}">
-        </div>
-        <div class="col-md-8">
-            <h1>{{ program.title }}</h1>
-            <p>{{ program.synopsis }}</p>
-            <p><strong>Catégorie :</strong> {{ program.category.name }}</p>
-            <h2>Saisons :</h2>
-            <ul class="list-group">
-                {% for season in seasons %}
-                    <li class="list-group-item">
-                        <a href="{{ path('program_season_show', { programId: program.id , seasonId: season.id}) }}">
-                            Saison {{ season.number }}
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="list-group-item">Aucune saison disponible pour cette série.</li>
-                {% endfor %}
-            </ul>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Display the program's image with alt attribute set to program title -->
+                <img src="{{ asset ('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid rounded" alt="{{ program.title }}">
+            </div>
+            <div class="col-md-8">
+                <h1>{{ program.title }}</h1>
+                <p>{{ program.synopsis }}</p>
+                <p>
+                    <strong>Catégorie :</strong>
+                    <!-- Display the program's category name -->
+                    {{ program.category.name }}</p>
+                <h2>Saisons :</h2>
+                <ul class="list-group">
+                    <!-- Loop through the seasons of the program -->
+                    {% for season in seasons %}
+                        <li class="list-group-item">
+                            <!-- Link to the season show page with programId and seasonId as parameters -->
+                            <a href="{{ path('program_season_show', { programId: program.id , seasonId: season.id}) }}">
+                                Saison
+                                {{ season.number }}
+                            </a>
+                        </li>
+                    <!-- If no seasons are available, display a message -->
+                    {% else %}
+                        <li class="list-group-item">Aucune saison disponible pour cette série.</li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="mt-4">
-    <a href="{{ path('category_index') }}" class="btn btn-outline-dark">Retour aux Catégories</a>
-    <a href="{{ path('program_index') }}" class="btn btn-outline-dark">Retour aux Programmes</a>
-    <a href="{{ path('app_index') }}" class="btn btn-outline-dark">Accueil</a>
-</div>
+    <div class="mt-4">
+        <!-- Links to different categories pages -->
+        <a href="{{ path('category_index') }}" class="btn btn-outline-dark">Retour aux Catégories</a>
+        <a href="{{ path('program_index') }}" class="btn btn-outline-dark">Retour aux Programmes</a>
+        <a href="{{ path('app_index') }}" class="btn btn-outline-dark">Accueil</a>
+    </div>
 {% endblock %}

@@ -65,7 +65,7 @@ class ProgramController extends AbstractController
      *
      * @param int $page The current page number. Default is 1.
      * @return Response Returns a Response object with rendered template for program list.
-     * @throws Exception If the page number is not a positive integer.
+     * @throws \Exception If the page number is not a positive integer.
      */
     #[Route('/list/{page}', requirements: ['page' => '\d+'], methods: ['GET'], name: 'list')]
     public function list(int $page = 1): Response
@@ -86,7 +86,7 @@ class ProgramController extends AbstractController
      *
      * @param Program $program The program entity to be displayed.
      * @return Response Returns a Response object with rendered template for program details.
-     * @throws Exception If the program entity is not found.
+     * @throws \Exception If the program entity is not found.
      */
     #[Route('/{id}', requirements: ['id' => '\d+'], methods: ['GET'], name: 'show')]
     public function show(Program $program): Response

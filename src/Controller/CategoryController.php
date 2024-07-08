@@ -5,10 +5,12 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
 use App\Repository\ProgramRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -25,13 +27,33 @@ class CategoryController extends AbstractController
         ]);
     }
 
+    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
+    public function new (Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $category = new Category();
+        $form = $this->createForm(CategoryType::class, $category);
+        // on recupere les données via la requete http, avec le methode handleRequest on hydrate $request.
+        $form->handleRequest($request);
+        // Was the form submitted ?
+        if ($form->isSubmitted()) {
+            $entityManager->persist($category);
+            $entityManager->flush();
+
+            // Redirect to categories list
+            return $this->redirectToRoute('category_index');
+        }
+
+        return $this->render('category/new.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
     #[Route('/{categoryName}', name: 'show', methods: ['GET'])]
     public function show(
-        string $categoryName, 
-        CategoryRepository $categoryRepository, 
+        string $categoryName,
+        CategoryRepository $categoryRepository,
         ProgramRepository $programRepository
-    ): Response
-    {
+    ): Response {
         $categories = $categoryRepository->findAll();
         $category = $categoryRepository->findOneBy(['name' => $categoryName]);
 
@@ -51,7 +73,7 @@ class CategoryController extends AbstractController
         $programs = $programRepository->findBy(
             ['category' => $category],
             ['id' => 'DESC'], // sort by newest
-            3 // limit to 3 results
+            3// limit to 3 results
         );
 
         return $this->render('category/show.html.twig', [
@@ -61,4 +83,5 @@ class CategoryController extends AbstractController
             'nextCategory' => $nextCategory,
         ]);
     }
+
 }

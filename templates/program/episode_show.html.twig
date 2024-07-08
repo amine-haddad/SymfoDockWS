@@ -36,12 +36,12 @@
                 {% else %}
                     <p>La vidéo n'est pas disponible pour cet épisode.</p>
                 {% endif %}#}
-                <a href="{{ path('program_season_show', { programId: program.id, seasonId: season.id }) }}" class="btn btn-outline-dark">Retour à la saison</a>
+                <a href="{{ path('program_season_show', { program_id: program.id, season_id: season.id }) }}" class="btn btn-outline-dark">Back to Saisons</a>
             </div>
             <div class="col">
                 <!-- Display a link to the video playback page -->
                 <!-- Lien vers la page de lecture de la vidéo -->
-                <a href="{{ path('program_episode_show', { programId: program.id, seasonId: season.id, episodeId: episode.id }) }}" class="btn btn-primary">Voir la vidéo</a>
+                <a href="{{ path('program_episode_show', { program_id: program.id, season_id: season.id, episode_id: episode.id }) }}" class="btn btn-primary">See Vidéo</a>
             </div>
         </div>
     </div>

@@ -2,10 +2,14 @@
 // src/Controller/ProgramController.php
 namespace App\Controller;
 
+//use App\Entity\Program;
+use App\Entity\Episode;
 use App\Entity\Program;
+use App\Entity\Season;
 use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
 use App\Repository\SeasonRepository;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -37,18 +41,9 @@ class ProgramController extends AbstractController
         $this->episodeRepository = $episodeRepository;
     }
 
-    /**
-     * Displays a list of all programs.
-     *
-     * @Route("/", name="index")
-     *
-     * @param ProgramRepository $programRepository Repository for Program entity
-     * @return Response Returns a Response object with rendered template
-     */
     #[Route('/', name: 'index')]
     public function index(ProgramRepository $programRepository): Response
     {
-        // Fetch all programs from the database
         $programs = $programRepository->findAll();
 
         // Render the template with the fetched programs
@@ -84,12 +79,15 @@ class ProgramController extends AbstractController
      *
      * @Route("/{id}", requirements={"id"="\d+"}, methods={"GET"}, name="show")
      *
-     * @param Program $program The program entity to be displayed.
+     *
      * @return Response Returns a Response object with rendered template for program details.
      * @throws \Exception If the program entity is not found.
      */
-    #[Route('/{id}', requirements: ['id' => '\d+'], methods: ['GET'], name: 'show')]
-    public function show(Program $program): Response
+    #[Route('/{program_id}', methods: ['GET'], name: 'show')]
+    public function show(
+        #[MapEntity(mapping: ['program_id' => 'id'])] Program $program
+        ): Response
+    
     {
         // Fetch all seasons related to the program
         $seasons = $program->getSeasons();
@@ -101,38 +99,35 @@ class ProgramController extends AbstractController
         ]);
     }
 
-    /**
-     * Displays a specific season of a program with its episodes.
-     *
-     * @Route("/{programId}/season/{seasonId}", requirements={"programId"="\d+", "seasonId"="\d+"}, methods={"GET"}, name="season_show")
-     *
-     * @param int $programId The id of the program.
-     * @param int $seasonId The id of the season.
-     * @return Response Returns a Response object with rendered template for season details.
-     * @throws NotFoundHttpException If the program or season is not found.
-     */
-    #[Route('/{programId}/season/{seasonId}', requirements: ['programId' => '\d+', 'seasonId' => '\d+'], methods: ['GET'], name: 'season_show')]
-    public function showSeason(int $programId, int $seasonId): Response
+    #[Route("/{program_id}/comment/{comment_id}", name:"program_show_comment")]
+public function showProgramComment(
+    #[MapEntity(mapping: ['program_id' => 'id'])] Program $program, 
+    //#[MapEntity(mapping: ['comment_id' => 'id'])] Comment $comment
+): Response
+{
+  return $this->render('comment.html.twig', [
+    'program' => $program,
+    //'comment' => $comment,
+  ]);
+}
+
+ 
+    #[Route('/{program_id}/season/{season_id}', methods: ['GET'], name: 'season_show')]
+    public function showSeason(
+        #[MapEntity(mapping: ['program_id' => 'id'])] Program $program,
+        #[MapEntity(mapping: ['season_id' => 'id'])] Season  $season,
+        ): Response
     {
-        // Fetch the program from the database
-        $program = $this->programRepository->find($programId);
 
         // If the program is not found, throw a NotFoundHttpException
         if (!$program) {
             throw $this->createNotFoundException(
-                'No program with id: ' . $programId . ' found.'
+                'No program with id: ' . 'program_id'. ' found.'
             );
         }
 
-        // Fetch the season from the database
-        $season = $this->seasonRepository->find($seasonId);
 
-        // If the season is not found or does not belong to the program, throw a NotFoundHttpException
-        if (!$season || $season->getProgram()->getId() !== $programId) {
-            throw $this->createNotFoundException(
-                'No season with id: ' . $seasonId . ' found for program with id: ' . $programId
-            );
-        }
+      
 
         // Fetch all episodes related to the season
         $episodes = $season->getEpisodes();
@@ -147,47 +142,41 @@ class ProgramController extends AbstractController
 
     /**
      * Displays a specific episode of a season of a program.
-     *
-     * @Route("/{programId}/season/{seasonId}/episode/{episodeId}", methods={"GET", "POST"}, name="episode_show")
-     *
-     * @param int $programId The id of the program.
-     * @param int $seasonId The id of the season.
-     * @param int $episodeId The id of the episode.
      * @return Response Returns a Response object with rendered template for episode details.
      * @throws NotFoundHttpException If the program, season, or episode is not found.
      */
-    #[Route('/{programId}/season/{seasonId}/episode/{episodeId}', methods: ['GET', 'POST'], name: 'episode_show')]
-    public function showEpisode(int $programId, int $seasonId, int $episodeId): Response
+    #[Route('/{program_id}/season/{season_id}/episode/{episode_id}', methods: ['GET', 'POST'], name: 'episode_show')]
+    public function showEpisode(
+        #[MapEntity(mapping: ['program_id' => 'id'])] Program $program,
+        #[MapEntity(mapping: ['season_id' => 'id'])] Season  $season,
+        #[MapEntity(mapping: ['episode_id' => 'id'])] Episode  $episode,
+    
+    ): Response
     {
         // Fetch the program from the database
-        $program = $this->programRepository->find($programId);
+        $program = $this->programRepository->find($program);
 
         // If the program is not found, throw a NotFoundHttpException
         if (!$program) {
             throw $this->createNotFoundException(
-                'No program with id: ' . $programId . ' found.'
+                'No program with id: ' . $program . ' found.'
             );
         }
 
-        // Fetch the season from the database
-        $season = $this->seasonRepository->find($seasonId);
-
-        // If the season is not found or does not belong to the program, throw a NotFoundHttpException
-        if (!$season || $season->getProgram()->getId() !== $programId) {
-            throw $this->createNotFoundException(
-                'No season with id: ' . $seasonId . ' found for program with id: ' . $programId
+        // Vérifiez si la saison appartient bien au programme
+        if ($season->getProgram()->getId() !== $program->getId()) {
+            throw new NotFoundHttpException(
+                'No season with id: ' . $season->getId() . ' found for program with id: ' . $program->getId()
             );
         }
 
-        // Fetch the episode from the database
-        $episode = $this->episodeRepository->find($episodeId);
-
-        // If the episode is not found or does not belong to the season, throw a NotFoundHttpException
-        if (!$episode || $episode->getSeason()->getId() !== $seasonId) {
-            throw $this->createNotFoundException(
-                'No episode with id: ' . $episodeId . ' found for season with id: ' . $seasonId
+        // Vérifiez si l'épisode appartient bien à la saison
+        if ($episode->getSeason()->getId() !== $season->getId()) {
+            throw new NotFoundHttpException(
+                'No episode with id: ' . $episode->getId() . ' found for season with id: ' . $season->getId()
             );
         }
+
 
         // Render the template with the program, season, and episode
         return $this->render('program/episode_show.html.twig', [

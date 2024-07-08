@@ -1,31 +1,42 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title>
-			{% block title %}Welcome!
-			{% endblock %}
-		</title>
-		<link rel="icon" type="image/png" href="{{ asset('images/duck.png') }}"> {% block stylesheets %}{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}Welcome!{% endblock %}
+    </title>
+    <link rel="icon" type="image/png" href="{{ asset('images/duck.png') }}">
+    
+    {# Block for stylesheets - you can add your stylesheets here #}
+    {% block stylesheets %}
+	<link rel="stylesheet" href="{{ asset('/assets/styles/app.scss') }}">
+{% endblock %}
+</head>
+<body>
+    <header>
+        {# Content of your header if necessary #}
+    </header>
 
-		{% block javascripts %}
-			{% block importmap %}
-				{{ importmap('app') }}
-				{{ encore_entry_script_tags('app') }}
-			{% endblock %}
-		{% endblock %}
-	</head>
-	<body>
-		<header>
-			{# Le contenu de votre header si nécessaire #}
-			
-		</header>
-		{% include "/components/_navbar.html.twig" %}
-		<main class="flex-shrink-0"> {% block body %}{% endblock %}
-			</main>
+    {# Include the navbar component #}
+    {% include '/components/_navbar.html.twig' %}
 
-			<footer>
-				{% include '/components/_footer.html.twig' %}
-			</footer>
-		</body>
-	</html>
+    <main class="flex-shrink-0">
+        {# Main content block #}
+        {% block body %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        {# Include the footer component #}
+        {% include '/components/_footer.html.twig' %}
+    </footer>
+
+    {# Block for JavaScript files - allows further blocks for import map and entry scripts #}
+    {% block javascripts %}
+        {% block importmap %}
+            {{ importmap('app') }}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+    {% endblock %}
+</body>
+</html>

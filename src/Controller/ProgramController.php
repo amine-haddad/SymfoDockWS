@@ -6,11 +6,14 @@ namespace App\Controller;
 use App\Entity\Episode;
 use App\Entity\Program;
 use App\Entity\Season;
+use App\Form\ProgramType;
 use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
 use App\Repository\SeasonRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -72,6 +75,31 @@ class ProgramController extends AbstractController
 
         // Render the template with the current page number
         return $this->render('program/list.html.twig', ['page' => $page]);
+    }
+
+    /**
+     * Redirects to the show action of ProgramController for a specific program.
+     *
+     * @Route("/new", methods={"GET", "POST"}, name="new")
+     *
+     * @return Response Returns a Response object that redirects to the show action of ProgramController for program with id 4.
+     */
+    #[Route('/new', methods: ['GET', 'POST'], name: 'new')]
+    public function new (Request $request,EntityManagerInterface $entityManager): Response
+    {
+        $program = NEW Program();
+        $form = $this->createForm(ProgramType::class, $program);
+        $form->handleRequest($request);
+        // Was the form submitted?
+        if($form->isSubmitted()&& $form->isValid())
+        {
+            $entityManager->persist($program);
+            $entityManager->flush();
+            return $this->redirectToRoute('program_show', ['program_id' => $program->getId()]);
+        }
+        return $this->render('program/new.html.twig', [
+            'form' => $form
+        ]);
     }
 
     /**
@@ -184,17 +212,6 @@ public function showProgramComment(
             'season' => $season,
             'episode' => $episode,
         ]);
-    }/**
-     * Redirects to the show action of ProgramController for a specific program.
-     *
-     * @Route("/new", methods={"GET", "POST"}, name="new")
-     *
-     * @return Response Returns a Response object that redirects to the show action of ProgramController for program with id 4.
-     */
-    #[Route('/new', methods: ['GET', 'POST'], name: 'new')]
-    public function new (): Response
-    {
-        return $this->redirectToRoute('program_show', ['id' => 4]);
     }
 
 }

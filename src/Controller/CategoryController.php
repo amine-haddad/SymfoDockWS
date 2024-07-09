@@ -35,7 +35,7 @@ class CategoryController extends AbstractController
         // on recupere les données via la requete http, avec le methode handleRequest on hydrate $request.
         $form->handleRequest($request);
         // Was the form submitted ?
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($category);
             $entityManager->flush();
 

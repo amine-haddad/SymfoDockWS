@@ -26,6 +26,7 @@
                 <h2 class="d-flex m-2 justify-content-start ">{{ episode.title }}/ Épisode : {{ episode.number }}</h2>
                 <p class="d-flex m-2 justify-content-start fst-italic">Synopsis :</p>
                 <p class="d-flex m-2 justify-content-start ">{{ episode.synopsis }}</p>
+            <p class="d-flex m-2 justify-content-start ">{{ episode.duration}}min </p>
             </div>
         </div>
         <div class="row">
@@ -39,12 +40,12 @@
                 {% else %}
                     <p>La vidéo n'est pas disponible pour cet épisode.</p>
                 {% endif %}#}
-                <a href="{{ path('program_season_show', { program_id: program.id, season_id: season.id }) }}" class="btn btn-outline-light ">Back to Saisons</a>
+                <a href="{{ path('program_season_show', { slug: program.slug, season_id: season.id }) }}" class="btn btn-outline-light ">Back to Saisons</a>
             </div>
             <div class="col d-flex m-2 justify-content-end">
                 <!-- Display a link to the video playback page -->
                 <!-- Lien vers la page de lecture de la vidéo -->
-                <a href="{{ path('program_episode_show', { program_id: program.id, season_id: season.id, episode_id: episode.id }) }}" class="btn btn-primary ">See Vidéo</a>
+                <a href="{{ path('program_episode_show', { slug: program.slug, season_id: season.id, slugy: episode.slug }) }}" class="btn btn-primary ">See Vidéo</a>
             </div>
         </div>
     </div>

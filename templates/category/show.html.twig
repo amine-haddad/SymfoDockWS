@@ -15,7 +15,7 @@
                 <li>
                     <div>
                         <!-- Link to the program details page -->
-                        <a href="{{ path('program_show', { 'program_id': program.id }) }}" class="btn btn-primary">
+                        <a href="{{ path('program_show', { 'slug': program.slug }) }}" class="btn btn-primary">
                             <h1>{{ program.title }}</h1>
                         </a>
                         <!-- Program synopsis -->

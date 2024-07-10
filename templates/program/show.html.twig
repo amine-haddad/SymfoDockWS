@@ -3,9 +3,9 @@
 {% block title %}Série #{{ program.id }}{% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4 ">
                 <!-- Display the program's image with alt attribute set to program title -->
                 <img src="{{ asset ('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid rounded" alt="{{ program.title }}">
             </div>
@@ -16,7 +16,20 @@
                     <strong>Catégorie :</strong>
                     <!-- Display the program's category name -->
                     {{ program.category.name }}</p>
-                <h2>Saisons :</h2>
+                    <strong>Acteurs :</strong>
+                    <ul>
+                        {% for actor in program.actors %}
+                            <li>{{ actor.name }}</li>
+                            <a href="{{ path('actor_show', {'actor_id': actor.id}) }}" class="btn btn-outline-primary">Filmographie</a>
+                        {% else %}
+                            <li>Aucun acteur pour cette série</li>
+                        {% endfor %}
+                    </ul>            
+            </div>
+        </div>
+        <div class="row">
+        <div class="col-8">
+            <h2>Saisons :</h2>
                 <ul class="list-group">
                     <!-- Loop through the seasons of the program -->
                     {% for season in seasons %}
@@ -32,7 +45,7 @@
                         <li class="list-group-item">Aucune saison disponible pour cette série.</li>
                     {% endfor %}
                 </ul>
-            </div>
+        </div>
         </div>
     </div>
 

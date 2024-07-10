@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Série #{{ actor.id }}
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1>{{ actor.name }}</h1>
+            <p><strong>Programs :</strong></p>
+            <strong>Apparaît aussi dans :</strong>
+        </div>
+    </div>
+    <div class="row">
+        {% for program in actor.programs %}
+            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div class="card h-100">
+                    <img src="{{ asset('images/the_walking_dead_saison_1.jpeg') }}" class="card-img-top img-fluid rounded" alt="{{ program.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="{{ path('program_show', { program_id: program.id  }) }}"class="btn btn-outline-primary">{{ program.title }}</a></h5>
+                        <p class="card-text">Genre: {{ program.category.name }}</p>
+                        <p class="card-text"><strong>Acteurs:</strong>
+                            {% for actors in program.actors %}
+                                <span>{{ actors.name }}{% if not loop.last %}, {% endif %}</span>
+                            {% endfor %}
+                        </p>
+                        
+                    </div>
+                </div>
+            </div>
+            
+        {% else %}
+            <div class="col-12">
+                <p>Aucun acteur pour cette série</p>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="mt-4">
+        <a href="{{ path('category_index') }}" class="btn btn-outline-dark">Retour aux Catégories</a>
+        <a href="{{ path('program_index') }}" class="btn btn-outline-dark">Retour aux Programmes</a>
+        <a href="{{ path('app_index') }}" class="btn btn-outline-dark">Accueil</a>
+    </div>
+</div>
+{% endblock %}

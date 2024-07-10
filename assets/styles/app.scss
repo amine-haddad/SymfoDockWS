@@ -1,12 +1,13 @@
 // Import Bootstrap SCSS files
 // This will include all the Bootstrap styles and components
 @import '../../vendor/twbs/bootstrap/scss/bootstrap';
+// Required
 // Define body styles
 body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    margin: 0;
+    margin: 20;
     background-color: #d4c011;
     /* Noir */
     color: #030518;
@@ -16,7 +17,7 @@ body {
 // Wrapper for main content
 .wrapper {
     flex: 1;
-    padding: 20px;
+    padding: 1rem;
 }
 
 // Footer styles
@@ -25,8 +26,7 @@ body {
     /* Jaune */
     color: #000;
     /* Noir pour le texte du footer */
-    padding: 20px 0;
-    position: fixed;
+    padding: 1rem 0;
     bottom: 0;
     width: 100%;
 }
@@ -36,9 +36,9 @@ body {
     background-color: #2e2272;
     color: #dbd7d7;
     perspective: 1000px;
-    height: 300px;
-    border: 1px solid #080808;
-    border-radius: 5px;
+    height: 80vh;
+    border: 0.1rem solid #080808;
+    border-radius: 0.5rem;
     overflow: hidden;
     /* Masquer le contenu débordant */
 }
@@ -88,9 +88,10 @@ body {
 .card-img-top {
     width: 100%;
     height: auto;
-    max-height: 150px;
+    max-height: 50vh;
+    /* Image ajuste sa hauteur proportionnellement */
     object-fit: contain;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 0.1rem solid #ddd;
 }
 
 // Responsive image class
@@ -102,5 +103,5 @@ body {
 
 // Rounded corners utility class
 .rounded {
-    border-radius: 8px;
+    border-radius: 0.5rem;
 }

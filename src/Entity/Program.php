@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Actor;
 use App\Repository\ProgramRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -51,9 +52,7 @@ class Program
     #[ORM\OneToMany(targetEntity: Season::class, mappedBy: 'program')]
     private Collection $seasons;
 
-    /**
-     * @var Collection<int, Actor>
-     */
+   
     #[ORM\ManyToMany(targetEntity: Actor::class, mappedBy: 'programs')]
     private Collection $actors;
 
@@ -146,9 +145,7 @@ class Program
         return $this;
     }
 
-    /**
-     * @return Collection<int, Actor>
-     */
+   
     public function getActors(): Collection
     {
         return $this->actors;

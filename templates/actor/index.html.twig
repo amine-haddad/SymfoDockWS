@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Index des Épisodes
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="my-4">Index des Acteurs et des series dans lequels ils apparaissent</h1>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nom de l'Acteur</th>
+                    <th scope="col">Programmes</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for actor in actors %}
+                    <tr>
+                        <td>{{ actor.id }}</td>
+                        <td>{{ actor.name }}</td>
+                        <td>
+                            {% if actor.programs is not empty %}
+                                <ul>
+                                    {% for program in actor.programs %}
+                                        <li>
+                                            <a href="{{ path('program_show', {'program_id': program.id}) }}">{{ program.title }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                Aucun programme trouvé
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ path('actor_show', {'actor_id': actor.id}) }}" class="btn btn-outline-primary">Voir l'Acteur</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">Aucun enregistrement trouvé</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ path('program_index') }}" class="btn btn-primary">Back Program</a>
+    </div>
+{% endblock %}

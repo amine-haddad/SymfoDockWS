@@ -27,7 +27,7 @@
 									<h6 class="card-subtitle mb-2 text-muted">Catégorie :
 										{{ program.category.name }}</h6>
 									<p class="card-text">{{ program.synopsis }}</p>
-									<a href="{{ path('program_show', { program_id: program.id }) }}" class="btn btn-outline-dark mt-3">Voir la fiche</a>
+									<a href="{{ path('program_show', { slug: program.slug }) }}" class="btn btn-outline-dark mt-3">Voir la fiche</a>
 								</div>
 							</div>
 						</div>

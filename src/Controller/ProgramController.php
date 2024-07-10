@@ -10,6 +10,7 @@ use App\Form\ProgramType;
 use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
 use App\Repository\SeasonRepository;
+use App\Service\ProgramDuration;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
@@ -94,9 +96,11 @@ class ProgramController extends AbstractController
      * @return Response Returns a Response object that redirects to the show action of ProgramController for program with id 4.
      */
     #[Route('/new', methods: ['GET', 'POST'], name: 'new')]
-    public function new (Request $request,EntityManagerInterface $entityManager): Response
+    public function new (Request $request,EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $program = NEW Program();
+        $slug = $slugger->slug($program->getTitle());
+        $program->setSlug($slug);
         $form = $this->createForm(ProgramType::class, $program);
         $form->handleRequest($request);
         // Was the form submitted?
@@ -121,25 +125,27 @@ class ProgramController extends AbstractController
      * @return Response Returns a Response object with rendered template for program details.
      * @throws \Exception If the program entity is not found.
      */
-    #[Route('/{program_id}', methods: ['GET'], name: 'show')]
+    #[Route('/{slug}', methods: ['GET'], name: 'show')]
     public function show(
-        #[MapEntity(mapping: ['program_id' => 'id'])] Program $program
+        #[MapEntity(mapping: ['slug' => 'slug'])] Program $program,
+        ProgramDuration $programDuration
         ): Response
     
     {
         // Fetch all seasons related to the program
         $seasons = $program->getSeasons();
-
+        $timeProgram = $programDuration->calculate($program);
         // Render the template with the program and its seasons
         return $this->render('program/show.html.twig', [
             'program' => $program,
             'seasons' => $seasons,
+            'programDuration' => $timeProgram
         ]);
     }
 
-    #[Route("/{program_id}/comment/{comment_id}", name:"program_show_comment")]
+    #[Route("/{slug}/comment/{comment_id}", name:"program_show_comment")]
 public function showProgramComment(
-    #[MapEntity(mapping: ['program_id' => 'id'])] Program $program, 
+    #[MapEntity(mapping: ['program_id' => 'slug'])] Program $program, 
     //#[MapEntity(mapping: ['comment_id' => 'id'])] Comment $comment
 ): Response
 {
@@ -150,9 +156,9 @@ public function showProgramComment(
 }
 
  
-    #[Route('/{program_id}/season/{season_id}', methods: ['GET'], name: 'season_show')]
+    #[Route('/{slug}/season/{season_id}', methods: ['GET'], name: 'season_show')]
     public function showSeason(
-        #[MapEntity(mapping: ['program_id' => 'id'])] Program $program,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Program $program,
         #[MapEntity(mapping: ['season_id' => 'id'])] Season  $season,
         ): Response
     {
@@ -183,17 +189,16 @@ public function showProgramComment(
      * @return Response Returns a Response object with rendered template for episode details.
      * @throws NotFoundHttpException If the program, season, or episode is not found.
      */
-    #[Route('/{program_id}/season/{season_id}/episode/{episode_id}', methods: ['GET', 'POST'], name: 'episode_show')]
+    #[Route('/{slug}/season/{season_id}/episode/{slugy}', methods: ['GET', 'POST'], name: 'episode_show')]
     public function showEpisode(
-        #[MapEntity(mapping: ['program_id' => 'id'])] Program $program,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Program $program,
         #[MapEntity(mapping: ['season_id' => 'id'])] Season  $season,
-        #[MapEntity(mapping: ['episode_id' => 'id'])] Episode  $episode,
+        #[MapEntity(mapping: ['slugy' => 'slug'])] Episode  $episode,
     
     ): Response
     {
         // Fetch the program from the database
         $program = $this->programRepository->find($program);
-
         // If the program is not found, throw a NotFoundHttpException
         if (!$program) {
             throw $this->createNotFoundException(

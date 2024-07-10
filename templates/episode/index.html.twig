@@ -8,9 +8,10 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>Ref</th>
                 <th>Title</th>
                 <th>Synopsis</th>
+                <th>duration</th>
                 <th>Number</th>
                 <th>actions</th>
             </tr>
@@ -21,10 +22,11 @@
                 <td>{{ episode.id }}</td>
                 <td>{{ episode.title }}</td>
                 <td>{{ episode.synopsis }}</td>
+                <td>{{ episode.duration }}' min.</td>
                 <td>{{ episode.number }}</td>
                 <td>
-                    <a href="{{ path('app_episode_show', {'id': episode.id}) }}">show</a>
-                    <a href="{{ path('app_episode_edit', {'id': episode.id}) }}">edit</a>
+                    <a href="{{ path('app_episode_show', {'slugy': episode.slug}) }}">show</a>
+                    <a href="{{ path('app_episode_edit', {'slugy': episode.slug}) }}">edit</a>
                 </td>
             </tr>
         {% else %}

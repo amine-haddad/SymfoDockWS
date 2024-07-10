@@ -36,7 +36,7 @@
                     <p>Numéro de l'épisode : {{ episode.number }}</p>
                     <p>Synopsis : {{ episode.synopsis }}</p>
                     <!-- Link to episode details page -->
-                    <a href="{{ path('program_episode_show', { program_id: program.id, season_id: season.id, episode_id: episode.id }) }}"class="btn btn-outline-dark w-50 text-center">
+                    <a href="{{ path('program_episode_show', { slug: program.slug, season_id: season.id, slugy: episode.slug }) }}"class="btn btn-outline-dark w-50 text-center">
                         Voir le détail de l'épisode
                     </a>
                 </div>
@@ -46,7 +46,7 @@
 
     <!-- Link to seasons page -->
     <div>
-        <a href="{{ path('program_show', { program_id: program.id }) }}" class="btn btn-secondary mt-3">
+        <a href="{{ path('program_show', { slug: program.slug }) }}" class="btn btn-secondary mt-3">
             Retour aux saisons
         </a>
     </div>

@@ -6,14 +6,17 @@ use App\Entity\Episode;
 use App\Form\EpisodeType;
 use App\Repository\EpisodeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/episode')]
 class EpisodeController extends AbstractController
 {
+
     #[Route('/', name: 'app_episode_index', methods: ['GET'])]
     public function index(EpisodeRepository $episodeRepository): Response
     {
@@ -23,9 +26,11 @@ class EpisodeController extends AbstractController
     }
 
     #[Route('/new', name: 'app_episode_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new (Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $episode = new Episode();
+        $slug = $slugger->slug($episode->getTitle());
+        $episode->setSlug($slug);
         $form = $this->createForm(EpisodeType::class, $episode);
         $form->handleRequest($request);
 
@@ -43,17 +48,21 @@ class EpisodeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_episode_show', methods: ['GET'])]
-    public function show(Episode $episode): Response
-    {
+    #[Route('/{slugy}', name: 'app_episode_show', methods: ['GET'])]
+    public function show(
+        #[MapEntity(mapping: ['slugy' => 'slug'])] Episode $episode
+    ): Response {
         return $this->render('episode/show.html.twig', [
             'episode' => $episode,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_episode_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Episode $episode, EntityManagerInterface $entityManager): Response
-    {
+    #[Route('/{slugy}/edit', name: 'app_episode_edit', methods: ['GET', 'POST'])]
+    public function edit(
+        Request $request,
+        #[MapEntity(mapping: ['slugy' => 'slug'])] Episode $episode,
+        EntityManagerInterface $entityManager
+    ): Response {
         $form = $this->createForm(EpisodeType::class, $episode);
         $form->handleRequest($request);
 
@@ -70,10 +79,11 @@ class EpisodeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_episode_delete', methods: ['POST'])]
-    public function delete(Request $request, Episode $episode, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$episode->getId(), $request->getPayload()->getString('_token'))) {
+    #[Route('/{slugy}', name: 'app_episode_delete', methods: ['POST'])]
+    public function delete(Request $request,
+        #[MapEntity(mapping: ['slugy' => 'slug'])] Episode $episode,
+        EntityManagerInterface $entityManager): Response {
+        if ($this->isCsrfTokenValid('delete' . $episode->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($episode);
             $entityManager->flush();
             $this->addFlash('danger', 'The program has been deleted');

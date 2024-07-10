@@ -7,6 +7,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * Class EpisodeFixtures
@@ -16,6 +17,12 @@ use Faker\Factory;
  */
 class EpisodeFixtures extends Fixture implements DependentFixtureInterface
 {
+    private SluggerInterface $slugger;
+
+    public function __construct(SluggerInterface $slugger)
+    {
+        $this->slugger = $slugger;
+    }
     /**
      * {@inheritdoc}
      *
@@ -41,10 +48,13 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface
                 // Generate a random number of episodes between 5 and 12
                 for ($episodeKey = 1; $episodeKey <= rand(5, 12); $episodeKey++) {
                     $episode = new Episode();
-                    $episode->setSeason($season);
                     $episode->setTitle($faker->sentence(3));
+                    $slugTitle = $this->slugger->slug($episode->getTitle(), '-');
+                    $episode->setSlug($slugTitle);
+                    $episode->setSeason($season);
                     $episode->setNumber($episodeKey);
                     $episode->setSynopsis($faker->paragraph(3));
+                    $episode->setDuration(rand(45, 60));
 
                     // Persist the episode to the database
                     $manager->persist($episode);

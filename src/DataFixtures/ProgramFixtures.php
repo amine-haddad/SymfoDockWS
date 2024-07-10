@@ -8,6 +8,8 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * Class ProgramFixtures
@@ -19,6 +21,12 @@ use Faker\Factory;
  */
 class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
+    private SluggerInterface $slugger;
+
+    public function __construct(SluggerInterface $slugger)
+    {
+        $this->slugger = $slugger;
+    }
     /**
      * Load data fixtures with the passed EntityManager
      *
@@ -32,6 +40,8 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
         for ($i = 1; $i <= 10; $i++) {
             $program = new Program();
             $program->setTitle($faker->words($faker->numberBetween(1, 3), true));
+            $slugTitle =$this->slugger->slug($program->getTitle(), '-');
+            $program->setSlug($slugTitle);
             $program->setSynopsis($faker->paragraphs(2, true));
             $program->setCategory($this->getReference('category_' . $faker->numberBetween(1, 15)));
             // $program->setPoster($programData['poster']); // Adding poster to the program

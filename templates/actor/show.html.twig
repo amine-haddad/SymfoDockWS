@@ -19,7 +19,7 @@
                 <div class="card h-100">
                     <img src="{{ asset('images/the_walking_dead_saison_1.jpeg') }}" class="card-img-top img-fluid rounded" alt="{{ program.title }}">
                     <div class="card-body">
-                        <h5 class="card-title"><a href="{{ path('program_show', { program_id: program.id  }) }}"class="btn btn-outline-primary">{{ program.title }}</a></h5>
+                        <h5 class="card-title"><a href="{{ path('program_show', { slug: program.slug  }) }}"class="btn btn-outline-primary">{{ program.title }}</a></h5>
                         <p class="card-text">Genre: {{ program.category.name }}</p>
                         <p class="card-text"><strong>Acteurs:</strong>
                             {% for actors in program.actors %}

@@ -43,7 +43,7 @@
                             <li>
                                 {{ actor.name }}
                             </li>
-                            <a href="{{ path('actor_show', {'actor_id': actor.id}) }}" class="btn btn-outline-primary">
+                            <a href="{{ path('actor_show', {'slug': actor.slug}) }}" class="btn btn-outline-primary">
                                 Filmographie
                             </a>
                         {% else %}

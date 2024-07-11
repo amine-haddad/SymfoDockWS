@@ -10,6 +10,8 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -26,17 +28,24 @@ class EpisodeController extends AbstractController
     }
 
     #[Route('/new', name: 'app_episode_new', methods: ['GET', 'POST'])]
-    public function new (Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new (Request $request, MailerInterface $mailer,EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $episode = new Episode();
-        $slug = $slugger->slug($episode->getTitle());
-        $episode->setSlug($slug);
+        
         $form = $this->createForm(EpisodeType::class, $episode);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
+            $slug = $slugger->slug($episode->getTitle());
+            $episode->setSlug($slug);
             $entityManager->persist($episode);
             $entityManager->flush();
+            $email = (new Email())
+                ->from($this->getParameter('mailer_from'))
+                ->to('your_email@example.com')
+                ->subject('Un nouvelle épisode vient d\'être publiée '.$episode->getTitle().' !')
+                ->html($this->renderView('program/newProgramEmail.html.twig', ['program' => $episode]));
+
+        $mailer->send($email);
             $this->addFlash('success', 'The new program has been created');
 
             return $this->redirectToRoute('app_episode_index', [], Response::HTTP_SEE_OTHER);
@@ -63,9 +72,9 @@ class EpisodeController extends AbstractController
         #[MapEntity(mapping: ['slugy' => 'slug'])] Episode $episode,
         EntityManagerInterface $entityManager
     ): Response {
+        
         $form = $this->createForm(EpisodeType::class, $episode);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
             $this->addFlash('success', 'The program has been edited');

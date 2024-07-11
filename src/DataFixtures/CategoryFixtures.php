@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Category;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\String\Slugger\SluggerInterface;
 // Tout d'abord nous ajoutons la classe Factory de FakerPhp
 use Faker\Factory;
 
@@ -16,6 +17,12 @@ use Faker\Factory;
  */
 class CategoryFixtures extends Fixture
 {
+    private SluggerInterface $slugger;
+
+    public function __construct(SluggerInterface $slugger)
+    {
+        $this->slugger = $slugger;
+    }
     /**
      * Load data fixtures with the passed EntityManager
      *
@@ -33,6 +40,8 @@ class CategoryFixtures extends Fixture
 
             // Set the name of the category using a random word from Faker
             $category->setName($faker->word());
+            $slugName = $this->slugger->slug($category->getName());
+            $category->setSlug($slugName);
 
             // Persist the category to the database
             $manager->persist($category);

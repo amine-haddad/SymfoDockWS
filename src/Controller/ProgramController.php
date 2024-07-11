@@ -155,7 +155,7 @@ class ProgramController extends AbstractController
 
     #[Route("/{slug}/comment/{comment_id}", name: "program_show_comment")]
     public function showProgramComment(
-        #[MapEntity(mapping: ['program_id' => 'slug'])] Program $program,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Program $program,
         //#[MapEntity(mapping: ['comment_id' => 'id'])] Comment $comment
     ): Response {
         return $this->render('comment.html.twig', [
@@ -173,7 +173,7 @@ class ProgramController extends AbstractController
         // If the program is not found, throw a NotFoundHttpException
         if (!$program) {
             throw $this->createNotFoundException(
-                'No program with id: ' . 'program_id' . ' found.'
+                'No program with id: ' . 'slug' . ' found.'
             );
         }
 

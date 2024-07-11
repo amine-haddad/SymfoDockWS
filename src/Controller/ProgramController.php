@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -96,20 +98,27 @@ class ProgramController extends AbstractController
      * @return Response Returns a Response object that redirects to the show action of ProgramController for program with id 4.
      */
     #[Route('/new', methods: ['GET', 'POST'], name: 'new')]
-    public function new (Request $request,EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new (Request $request, MailerInterface $mailer,EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $program = NEW Program();
-        $slug = $slugger->slug($program->getTitle());
-        $program->setSlug($slug);
         $form = $this->createForm(ProgramType::class, $program);
         $form->handleRequest($request);
         // Was the form submitted?
         if($form->isSubmitted()&& $form->isValid())
         {
+            $slug = $slugger->slug($program->getTitle());
+            $program->setSlug($slug);
             $entityManager->persist($program);
             $entityManager->flush();
+            $email = (new Email())
+                ->from($this->getParameter('mailer_from'))
+                ->to('your_email@example.com')
+                ->subject('Une nouvelle série vient d\'être publiée'.$program->getTitle().' !')
+                ->html($this->renderView('program/newProgramEmail.html.twig', ['program' => $program]));
+
+        $mailer->send($email);
             $this->addFlash('success', 'The new program has been created');
-            return $this->redirectToRoute('program_show', ['program_id' => $program->getId()]);
+            return $this->redirectToRoute('program_show', ['slug' => $program->getSlug()]);
         }
         return $this->render('program/new.html.twig', [
             'form' => $form

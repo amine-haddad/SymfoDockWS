@@ -7,21 +7,26 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ActorFixtures extends Fixture implements DependentFixtureInterface
 {
+    private SluggerInterface $slugger;
     private $faker;
-
-    public function __construct()
+    public function __construct(SluggerInterface $slugger)
     {
+        $this->slugger = $slugger;
         $this->faker = Factory::create('fr_FR');
     }
+  
+
     public function load(ObjectManager $manager): void
     {
         for ($i = 1; $i <= 10; $i++) {
             $actor = new Actor();
             $actor->setName($this->faker->name());
-
+            $slugName = $this->slugger->slug($actor->getName());
+            $actor->setSlug($slugName);
             // Assign this actor to a random number of programs
             $programCount = random_int(1, 10); // Each actor will be associated with between 1 and 10 programs
             $assignedPrograms = [];

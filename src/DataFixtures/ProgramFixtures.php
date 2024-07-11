@@ -40,7 +40,7 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
         for ($i = 1; $i <= 10; $i++) {
             $program = new Program();
             $program->setTitle($faker->words($faker->numberBetween(1, 3), true));
-            $slugTitle =$this->slugger->slug($program->getTitle(), '-');
+            $slugTitle =$this->slugger->slug($program->getTitle());
             $program->setSlug($slugTitle);
             $program->setSynopsis($faker->paragraphs(2, true));
             $program->setCategory($this->getReference('category_' . $faker->numberBetween(1, 15)));

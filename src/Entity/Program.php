@@ -27,7 +27,6 @@ class Program
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank()]
-    
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -56,8 +55,9 @@ class Program
     #[ORM\ManyToMany(targetEntity: Actor::class, mappedBy: 'programs')]
     private Collection $actors;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $slug = null;
+
 
     public function __construct()
     {
@@ -178,10 +178,11 @@ class Program
         return $this->slug;
     }
 
-    public function setSlug(string $slug): static
+    public function setSlug(?string $slug): static
     {
         $this->slug = $slug;
 
         return $this;
     }
+
 }

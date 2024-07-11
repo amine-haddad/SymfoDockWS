@@ -49,7 +49,7 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface
                 for ($episodeKey = 1; $episodeKey <= rand(5, 12); $episodeKey++) {
                     $episode = new Episode();
                     $episode->setTitle($faker->sentence(3));
-                    $slugTitle = $this->slugger->slug($episode->getTitle(), '-');
+                    $slugTitle = $this->slugger->slug($episode->getTitle());
                     $episode->setSlug($slugTitle);
                     $episode->setSeason($season);
                     $episode->setNumber($episodeKey);

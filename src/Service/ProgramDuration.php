@@ -4,7 +4,7 @@ namespace App\Service;
 
 use App\Entity\Program;
 
-class ProgramDuration extends Program
+class ProgramDuration 
 {
     /**
      * Calculates the total duration of a program in days, hours, and minutes.

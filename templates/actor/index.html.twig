@@ -27,7 +27,7 @@
                                 <ul>
                                     {% for program in actor.programs %}
                                         <li>
-                                            <a href="{{ path('program_show', {'program_id': program.id}) }}">{{ program.title }}</a>
+                                            <a href="{{ path('program_show', {'slug': program.slug}) }}">{{ program.title }}</a>
                                         </li>
                                     {% endfor %}
                                 </ul>
@@ -36,7 +36,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a href="{{ path('actor_show', {'actor_id': actor.id}) }}" class="btn btn-outline-primary">Voir l'Acteur</a>
+                            <a href="{{ path('actor_show', {'slug': actor.slug}) }}" class="btn btn-outline-primary">Voir l'Acteur</a>
                         </td>
                     </tr>
                 {% else %}

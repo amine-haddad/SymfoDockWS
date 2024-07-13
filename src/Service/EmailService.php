@@ -25,7 +25,7 @@ class EmailService extends AbstractController
         $email = (new Email())
             ->from($this->getParameter('mailer_from'))
             ->to('recipient@example.com')
-            ->subject('Un nouvelle épisode vient d\'être publiée '.$program->getTitle().' !')
+            ->subject('Un nouvelle épisode vient d\'être publiée  !')
             ->html($this->renderView('program/newProgramEmail.inky.twig', ['program' => $program]));
 
         $this->mailer->send($email);
@@ -36,7 +36,7 @@ class EmailService extends AbstractController
         $email = (new Email())
             ->from($this->getParameter('mailer_from'))
             ->to('recipient@example.com')
-            ->subject('Un nouvelle épisode vient d\'être publiée '.$episode->getTitle().' !')
+            ->subject('Un nouvelle épisode vient d\'être publiée  !')
             ->html($this->renderView('episode/newEpisodeEmail.inky.twig', ['episode' => $episode]));
 
         $this->mailer->send($email);

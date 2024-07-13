@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-md-4 ">
                 <!-- Display the program's image with alt attribute set to program title -->
-                <img src="{{ asset ('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid rounded" alt="{{ program.title }}"></div>
+            <img src="{{ vich_uploader_asset(program) }}" alt="{{ program.title }}"></div>
                 <div class="col-md-8">
                     <h1>
                         {{ program.title }}
@@ -41,6 +41,7 @@
                     <ul>
                         {% for actor in program.actors %}
                             <li>
+                             
                                 {{ actor.name }}
                             </li>
                             <a href="{{ path('actor_show', {'slug': actor.slug}) }}" class="btn btn-outline-primary">

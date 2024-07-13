@@ -9,10 +9,12 @@ use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
 use App\Repository\ProgramRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/category', name: 'category_')]
 class CategoryController extends AbstractController
@@ -28,7 +30,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new (Request $request, EntityManagerInterface $entityManager): Response
+    public function new (Request $request, SluggerInterface $slugger, EntityManagerInterface $entityManager): Response
     {
         $category = new Category();
         $form = $this->createForm(CategoryType::class, $category);
@@ -36,6 +38,8 @@ class CategoryController extends AbstractController
         $form->handleRequest($request);
         // Was the form submitted ?
         if ($form->isSubmitted() && $form->isValid()) {
+            $slug = $slugger->slug($category->getName());
+            $category->setSlug($slug);
             $entityManager->persist($category);
             $entityManager->flush();
             $this->addFlash('success', 'The new program has been created');
@@ -49,14 +53,14 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('/{categoryName}', name: 'show', methods: ['GET'])]
+    #[Route('/{slug}', name: 'show', methods: ['GET'])]
     public function show(
         string $categoryName,
-        CategoryRepository $categoryRepository,
+        #[MapEntity(mapping: ['slug' => 'slug'])] CategoryRepository $categoryRepository,
         ProgramRepository $programRepository
     ): Response {
         $categories = $categoryRepository->findAll();
-        $category = $categoryRepository->findOneBy(['name' => $categoryName]);
+        $category = $categoryRepository->findOneBy(['slug' => $categoryName]);
 
         if (!$category) {
             throw $this->createNotFoundException(

@@ -18,7 +18,7 @@
 							<div class="card-inner">
 								<div class="card-front">
 									<h5 class="card-title">{{ program.title }}</h5>
-									<img src="{{ asset ('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid rounded" alt="{{ program.title }}">
+									<img src="{{ vich_uploader_asset(program) }}" class="img-fluid rounded mx-auto" alt="{{ program.title }}">
 								{# Placeholder for the image, update src attribute once you have images #}
 									{#<img src="{{ asset( program.poster) }}" class="card-img-top" alt="{{ program.title }}">#}
 								</div>

@@ -25,21 +25,16 @@ class ActorFixtures extends Fixture implements DependentFixtureInterface
         for ($i = 1; $i <= 10; $i++) {
             $actor = new Actor();
             $actor->setName($this->faker->name());
-            $slugName = $this->slugger->slug($actor->getName());
-            $actor->setSlug($slugName);
-            // Assign this actor to a random number of programs
-            $programCount = random_int(1, 10); // Each actor will be associated with between 1 and 10 programs
-            $assignedPrograms = [];
-            for ($j = 1; $j < $programCount; $j++) {
-                do {
-                    $programReference = 'program_' . random_int(1, 10);
-                } while (in_array($programReference, $assignedPrograms));
-                $assignedPrograms[] = $programReference;
-                $program = $this->getReference($programReference);
-                $actor->addProgram($program);
-            }
-
             $manager->persist($actor);
+    
+            // Ajout de l'acteur à un ou plusieurs programmes
+            $programCount = random_int(1, 10);
+            for ($j = 1; $j <= $programCount; $j++) {
+                
+                $program = $this->getReference('program_' . random_int(1, 10));
+                $program->addActor($actor);
+                $manager->persist($program);
+            }
             $this->addReference('actor_' . $i, $actor);
         }
 

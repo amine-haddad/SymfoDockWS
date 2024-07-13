@@ -1,53 +1,74 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Wild Series - Épisode {{ episode.number }}{% endblock %}
+{% block title %}
+    Wild Series - Épisode
+    {{ episode.number }}
+{% endblock %}
 
 {% block body %}
     <!-- Display a card with episode details -->
-<div class ="container-fluid d-flex flex-column min-vh-100">
-    <div class="card">
-        <div class="row">
-            <div class="col-4 d-flex justify-content-center ">
-                <!-- Display program poster if available, else default image -->
-                {% if program.poster %}
-                <div class="shadow ">
-                    <img src="{{ asset('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid mx-auto" alt="{{ program.title }}">
-                </div>    <!-- <img src="{{ program.poster }}" class="img-fluid rounded" alt="Affiche de l'épisode {{ episode.title }}"> -->
-                {% else %}
-                <div class="shadow">
-                    <img src="{{ asset('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid rounded mx-auto" alt="{{ program.title }}">
-                </div>  <!-- <img src="/path/to/default/poster.jpg" class="img-fluid rounded" alt="Affiche de l'épisode par défaut"> -->
-                {% endif %}
+    <div class="container-fluid d-flex flex-column min-vh-100">
+        <div class="card">
+            <div class="row">
+                <div class="col-4 d-flex justify-content-center ">
+                    <!-- Display program poster if available, else default image -->
+                    {% if program.poster is empty %}
+                        <div class="shadow">
+                            <img src="{{ asset('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid mx-auto" alt="{{ program.title }}"></div>
+                        {% else %}
+                            <div class="shadow">
+                               
+                        <img src="{{ vich_uploader_asset(program) }}" class="img-fluid rounded mx-auto" alt="{{ program.title }}"></div>
+                            {% endif %}
+                        </div>
+                        <div class="col-8 align-self-center">
+                            <!-- Display program title, season number, episode number, and title -->
+                            <h1 class="d-flex m-5 justify-content-center ">
+                                {{ program.title }}
+                            </h1>
+                            <h3 class="d-flex m-2 justify-content-start ">
+                                Saison :
+                                {{ season.number }}
+                            </h3>
+                            <h2 class="d-flex m-2 justify-content-start ">
+                                {{ episode.title }}
+                                / Épisode :
+                                {{ episode.number }}
+                            </h2>
+                            <p class="d-flex m-2 justify-content-start fst-italic">
+                                Synopsis :
+                            </p>
+                            <p class="d-flex m-2 justify-content-start ">
+                                {{ episode.synopsis }}
+                            </p>
+                            <p class="d-flex m-2 justify-content-start ">
+                                {{ episode.duration }}
+                                min
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col d-flex m-2 justify-content-start ">
+                            <!-- Display a link to return to the season page -->
+                            {#{% if episode.videoUrl %}
+                                <video controls>
+                                <source src="{{ asset(episode.videoUrl) }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                                </video>
+                                {% else %}
+                                <p>La vidéo n'est pas disponible pour cet épisode.</p>
+                            {% endif %}#}
+                                <a href="{{ path('program_season_show', { slug: program.slug, season_id: season.id }) }}" class="btn btn-outline-light "> Back to Saisons
+                            </a>
+                        </div>
+                        <div class="col d-flex m-2 justify-content-end">
+                            <!-- Display a link to the video playback page -->
+                            <!-- Lien vers la page de lecture de la vidéo -->
+                                <a href="{{ path('program_episode_show', { slug: program.slug, season_id: season.id, slugy: episode.slug }) }}" class="btn btn-primary "> See Vidéo
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-8 align-self-center">
-                <!-- Display program title, season number, episode number, and title -->
-                <h1 class="d-flex m-5 justify-content-center " >{{ program.title }}</h1>
-                <h3 class="d-flex m-2 justify-content-start ">Saison : {{ season.number }}</h3>
-                <h2 class="d-flex m-2 justify-content-start ">{{ episode.title }}/ Épisode : {{ episode.number }}</h2>
-                <p class="d-flex m-2 justify-content-start fst-italic">Synopsis :</p>
-                <p class="d-flex m-2 justify-content-start ">{{ episode.synopsis }}</p>
-            <p class="d-flex m-2 justify-content-start ">{{ episode.duration}}min </p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col d-flex m-2 justify-content-start ">
-                <!-- Display a link to return to the season page -->
-                {#{% if episode.videoUrl %}
-                    <video controls>
-                        <source src="{{ asset(episode.videoUrl) }}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                {% else %}
-                    <p>La vidéo n'est pas disponible pour cet épisode.</p>
-                {% endif %}#}
-                <a href="{{ path('program_season_show', { slug: program.slug, season_id: season.id }) }}" class="btn btn-outline-light ">Back to Saisons</a>
-            </div>
-            <div class="col d-flex m-2 justify-content-end">
-                <!-- Display a link to the video playback page -->
-                <!-- Lien vers la page de lecture de la vidéo -->
-                <a href="{{ path('program_episode_show', { slug: program.slug, season_id: season.id, slugy: episode.slug }) }}" class="btn btn-primary ">See Vidéo</a>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+        {% endblock %}
+        

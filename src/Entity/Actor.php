@@ -7,11 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
 
 #[ORM\Entity(repositoryClass: ActorRepository::class)]
 #[Assert\EnableAutoMapping]
+#[Vich\Uploadable] 
 class Actor
 {
     #[ORM\Id]
@@ -24,26 +25,29 @@ class Actor
     #[Assert\Length(
         max: 30,
     )]
-    #[UniqueEntity(
-        message: 'Cet acteur est déjà inscrit dans la base de donnée.',
-        fields: ['name']
-    
-        )]
     private ?string $name = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $photo = null;
+
+    #[Vich\UploadableField(mapping: 'photo_file', fileNameProperty: 'photo')]
+    private ?file $photoFile = null;
+
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $slug = null;
 
     /**
      * @var Collection<int, Program>
      */
-    #[ORM\ManyToMany(targetEntity: Program::class, inversedBy: 'actors')]
+    #[ORM\ManyToMany(targetEntity: Program::class, mappedBy: 'actors')]
     private Collection $programs;
-
-    #[ORM\Column(length: 255)]
-    private ?string $slug = null;
 
     public function __construct()
     {
         $this->programs = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -62,6 +66,43 @@ class Actor
         return $this;
     }
 
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?string $photo): static
+    {
+        $this->photo = $photo;
+
+        return $this;
+    }
+
+    public function getPhotoFile(): ?File
+    {
+        return $this->photoFile;
+    }
+    public function setPhotoFile(File $image = null): Actor
+    {
+        $this->photoFile = $image;
+        if ($image) {
+            $this->updatedAt = new \DateTime('now');
+        }
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Program>
      */
@@ -74,6 +115,7 @@ class Actor
     {
         if (!$this->programs->contains($program)) {
             $this->programs->add($program);
+            $program->addActor($this);
         }
 
         return $this;
@@ -81,20 +123,11 @@ class Actor
 
     public function removeProgram(Program $program): static
     {
-        $this->programs->removeElement($program);
+        if ($this->programs->removeElement($program)) {
+            $program->removeActor($this);
+        }
 
         return $this;
     }
 
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(string $slug): static
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
 }

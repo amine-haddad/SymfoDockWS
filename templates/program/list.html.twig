@@ -1,10 +1,35 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Wild Series{% endblock %}
+{% block title %}List of Programs{% endblock %}
 
 {% block body %}
-<h1>Page number {{ page }}.</h1>
-<a href="{{ path('program_show', {id: 4}) }}" class="btn btn-outline-light" >voir la serie</a>
-<a href="{{ path('app_index') }}" class="btn btn-outline-light">return index</a>
+    <h1>List of Programs</h1>
 
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Synopsis</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for program in programs %}
+                <tr>
+                    <td>{{ program.title }}</td>
+                    <td>{{ program.synopsis }}</td>
+                    <td>
+                        <a href="{{ path('program_edit', {'slug': program.slug}) }}" class="btn btn-sm btn-primary">Edit</a>
+                        <a href="{{ path('program_show', {'slug': program.slug}) }}" class="btn btn-sm btn-info">Show</a>
+                        {{ include('program/_delete_form.html.twig', {'program': program}) }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div>
+        <a href="{{ path('program_new') }}" class="btn btn-secondary">Add New Program</a>
+        <a href="{{ path('app_episode_index') }}" class="btn btn-secondary">Go to Episodes</a>
+    </div>
 {% endblock %}

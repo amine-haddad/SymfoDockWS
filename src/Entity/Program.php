@@ -9,7 +9,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
+//Ici on importe le package Vich, que l’on utilisera sous l’alias “Vich”
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[Assert\EnableAutoMapping]
 #[ORM\Entity(repositoryClass: ProgramRepository::class)]
@@ -17,7 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     message: 'Ce titre est déjà utilisé pour un autre programme.',
     fields: ['title']
 
-    )]
+)]
+#[Vich\Uploadable]
 class Program
 {
     #[ORM\Id]
@@ -33,15 +37,21 @@ class Program
     #[Assert\NotBlank()]
     #[Assert\Regex(
         pattern: "/^plus belle la vie/",
-        match: false,
+        match :false,
         message: 'On parle de vraies séries ici',
     )]
     private ?string $synopsis = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $poster = null;
+    #[Vich\UploadableField(mapping: 'poster_file', fileNameProperty: 'poster')]
+    #[Assert\File(
+        maxSize: '1M',
+        mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+    )]
+    private ?File $posterFile = null;
 
-    #[ORM\ManyToOne(inversedBy:'programs')]
+    #[ORM\ManyToOne(inversedBy: 'programs')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
@@ -49,15 +59,20 @@ class Program
      * @var Collection<int, Season>
      */
     #[ORM\OneToMany(targetEntity: Season::class, mappedBy: 'program')]
+    #[Assert\NotBlank()]
     private Collection $seasons;
-
-   
-    #[ORM\ManyToMany(targetEntity: Actor::class, mappedBy: 'programs')]
-    private Collection $actors;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $slug = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
+
+    /**
+     * @var Collection<int, Actor>
+     */
+    #[ORM\ManyToMany(targetEntity: Actor::class, inversedBy: 'programs')]
+    private Collection $actors;
 
     public function __construct()
     {
@@ -106,6 +121,19 @@ class Program
         return $this;
     }
 
+    public function getPosterFile(): ?File
+    {
+        return $this->posterFile;
+    }
+    public function setPosterFile(File $image = null): Program
+    {
+        $this->posterFile = $image;
+        if ($image) {
+            $this->updatedAt = new \DateTime('now');
+        }
+        return $this;
+    }
+
     public function getCategory(): ?Category
     {
         return $this->category;
@@ -148,7 +176,33 @@ class Program
         return $this;
     }
 
-   
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Actor>
+     */
     public function getActors(): Collection
     {
         return $this->actors;
@@ -158,7 +212,6 @@ class Program
     {
         if (!$this->actors->contains($actor)) {
             $this->actors->add($actor);
-            $actor->addProgram($this);
         }
 
         return $this;
@@ -166,21 +219,7 @@ class Program
 
     public function removeActor(Actor $actor): static
     {
-        if ($this->actors->removeElement($actor)) {
-            $actor->removeProgram($this);
-        }
-
-        return $this;
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(?string $slug): static
-    {
-        $this->slug = $slug;
+        $this->actors->removeElement($actor);
 
         return $this;
     }

@@ -11,6 +11,7 @@
             <h1>{{ actor.name }}</h1>
             <p><strong>Programs :</strong></p>
             <strong>Apparaît aussi dans :</strong>
+                <img src="{{ vich_uploader_asset(actor, 'photoFile') }}" alt="{{ actor.name }}">
         </div>
     </div>
     <div class="row">
@@ -33,7 +34,7 @@
             
         {% else %}
             <div class="col-12">
-                <p>Aucun acteur pour cette série</p>
+                <p>Aucune série pour cette Acteur</p>
             </div>
         {% endfor %}
     </div>

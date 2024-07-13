@@ -28,7 +28,7 @@ class Category
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Program::class)]
     private $programs;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $slug = null;
 
     public function __construct()

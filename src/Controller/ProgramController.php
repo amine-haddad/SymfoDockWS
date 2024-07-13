@@ -45,34 +45,25 @@ class ProgramController extends AbstractController
         SeasonRepository $seasonRepository,
         EpisodeRepository $episodeRepository,
         EmailService $emailService
-    ) {
-        $this->programRepository = $programRepository;
-        $this->seasonRepository = $seasonRepository;
-        $this->episodeRepository = $episodeRepository;
-        $this->emailService = $emailService;
-    }
-
-    #[Route('/', name: 'index')]
-    public function index(RequestStack $requestStack, ProgramRepository $programRepository): Response
-    {
-        $session = $requestStack->getSession();
-        if (!$session->has('total')) {
-            $session->set('total', 0); // if total doesn’t exist in session, it is initialized.
+        ) {
+            $this->programRepository = $programRepository;
+            $this->seasonRepository = $seasonRepository;
+            $this->episodeRepository = $episodeRepository;
+            $this->emailService = $emailService;
         }
-
-        $total = $session->get('total'); // get actual value in session with ‘total' key.
-        // some code using $session
-        $programs = $programRepository->findAll();
-
-        // Render the template with the fetched programs
-        return $this->render('program/index.html.twig', [
-            'website' => 'Wild Series Docker',
-            'programs' => $programs,
-        ]);
-    }
-
-    /**
-     * Displays a list of programs with pagination.
+        #[Route('/', name: 'index')]
+        public function index(): Response
+        {
+           
+            $programs = $this->programRepository->findAll();
+            //dd($programs);
+            return $this->render('program/index.html.twig', [
+                'website' => 'Wild Series Docker',
+                'programs' => $programs,
+            ]);
+        }
+        /**
+         * Displays a list of programs with pagination.
      *
      * @Route("/list/{page}", requirements={"page"="\d+"}, methods={"GET"}, name="list")
      *
@@ -83,14 +74,19 @@ class ProgramController extends AbstractController
     #[Route('/list/{page}', requirements: ['page' => '\d+'], methods: ['GET'], name: 'list')]
     public function list(int $page = 1): Response
     {
-        // Check if the page number is a positive integer
         if ($page <= 0) {
             throw new \Exception('Page number must be a positive integer.');
         }
 
-        // Render the template with the current page number
-        return $this->render('program/list.html.twig', ['page' => $page]);
+        $programs = $this->programRepository->findAll();
+
+        return $this->render('program/list.html.twig', [
+            'programs' => $programs,
+            'page' => $page,
+        ]);
     }
+
+
 
     /**
      * Redirects to the show action of ProgramController for a specific program.
@@ -125,6 +121,28 @@ class ProgramController extends AbstractController
         }
         return $this->render('program/new.html.twig', [
             'form' => $form,
+        ]);
+    }
+
+    #[Route('/{slug}/edit', methods: ['GET', 'POST'], name: 'edit')]
+    public function edit(Program $program, Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    {
+        $form = $this->createForm(ProgramType::class, $program);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $program->setSlug($slugger->slug($program->getTitle())); // Mettre à jour le slug si nécessaire
+
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Program updated successfully.');
+
+            return $this->redirectToRoute('program_show', ['slug' => $program->getSlug()]);
+        }
+
+        return $this->render('program/edit.html.twig', [
+            'program' => $program,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -231,4 +249,17 @@ class ProgramController extends AbstractController
         ]);
     }
 
+    #[Route('/{slug}/delete', name: 'delete', methods: ['POST'])]
+    public function delete(Request $request, Program $program, EntityManagerInterface $entityManager): Response
+    {
+        // Vérifiez si le token CSRF est valide
+        if ($this->isCsrfTokenValid('delete' . $program->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($program);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Program deleted successfully.');
+        }
+
+        return $this->redirectToRoute('program_index');
+    }
 }

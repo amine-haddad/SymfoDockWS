@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\DataFixtures\CategoryFixtures;
 use App\Entity\Program;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -44,6 +45,7 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
             $program->setSlug($slugTitle);
             $program->setSynopsis($faker->paragraphs(2, true));
             $program->setCategory($this->getReference('category_' . $faker->numberBetween(1, 15)));
+            
             // $program->setPoster($programData['poster']); // Adding poster to the program
 
             $manager->persist($program);

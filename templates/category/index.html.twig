@@ -14,7 +14,7 @@
                     <div class="col-md-3 category-item mb-3">
                         <h3>
                             <!-- Link to the category show page -->
-                            <a href="{{ path('category_show', { categoryName: category.name }) }}" class="btn btn-outline-dark w-100 text-center">
+                            <a href="{{ path('category_show', { slug: category.slug }) }}" class="btn btn-outline-dark w-100 text-center">
                                 {{ category.name }}
                             </a>
                         </h3>

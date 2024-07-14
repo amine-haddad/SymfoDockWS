@@ -58,7 +58,7 @@ class Program
     /**
      * @var Collection<int, Season>
      */
-    #[ORM\OneToMany(targetEntity: Season::class, mappedBy: 'program')]
+    #[ORM\OneToMany(targetEntity: Season::class, mappedBy: 'program', cascade: ['remove'])]
     #[Assert\NotBlank()]
     private Collection $seasons;
 

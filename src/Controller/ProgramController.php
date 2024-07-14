@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 //use App\Entity\Program;
+use App\Entity\Comment;
 use App\Entity\Episode;
 use App\Entity\Program;
 use App\Entity\Season;
+use App\Form\CommentFormType;
 use App\Form\ProgramType;
 use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
@@ -16,7 +18,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Mailer\MailerInterface;
@@ -51,7 +52,7 @@ class ProgramController extends AbstractController
             $this->episodeRepository = $episodeRepository;
             $this->emailService = $emailService;
         }
-        #[Route('/', name: 'index')]
+        #[Route('/', name: 'index', methods: ['GET'])]
         public function index(): Response
         {
            
@@ -171,7 +172,7 @@ class ProgramController extends AbstractController
         ]);
     }
 
-    #[Route("/{slug}/comment/{comment_id}", name: "program_show_comment")]
+    #[Route("/{slug}/comment/{comment_id}", name: "program_show_comment", methods: ['GET'])]
     public function showProgramComment(
         #[MapEntity(mapping: ['slug' => 'slug'])] Program $program,
         //#[MapEntity(mapping: ['comment_id' => 'id'])] Comment $comment
@@ -212,7 +213,7 @@ class ProgramController extends AbstractController
      * @throws NotFoundHttpException If the program, season, or episode is not found.
      */
     #[Route('/{slug}/season/{season_id}/episode/{slugy}', methods: ['GET', 'POST'], name: 'episode_show')]
-    public function showEpisode(
+    public function showEpisode(Request $request,EntityManagerInterface $entityManager,
         #[MapEntity(mapping: ['slug' => 'slug'])] Program $program,
         #[MapEntity(mapping: ['season_id' => 'id'])] Season $season,
         #[MapEntity(mapping: ['slugy' => 'slug'])] Episode $episode,
@@ -220,6 +221,7 @@ class ProgramController extends AbstractController
     ): Response {
         // Fetch the program from the database
         $program = $this->programRepository->find($program);
+        $comment = new Comment();
         // If the program is not found, throw a NotFoundHttpException
         if (!$program) {
             throw $this->createNotFoundException(
@@ -241,11 +243,31 @@ class ProgramController extends AbstractController
             );
         }
 
+        $comments = $episode->getComments();
+        
+        $form = $this->createForm(CommentFormType::class, $comment);
+        // Get data from HTTP request
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $comment->setAuthor($this->getUser());
+            $comment->setEpisode($episode);
+            
+            //For exemple : persiste & flush the entity
+            // Persist Category Object
+            $entityManager->persist($comment);
+            //Flush the persisted object
+            $entityManager->flush();
+            return $this->redirectToRoute('program_episode_show',['slug' => $program->getSlug(),'season_id' => $season->getId(), 'slugy'=>$episode->getSlug()]);
+        }
+
         // Render the template with the program, season, and episode
         return $this->render('program/episode_show.html.twig', [
             'program' => $program,
             'season' => $season,
             'episode' => $episode,
+            'comment' => $comment,
+            'comments' => $comments,
+            "form" => $form->createView(),
         ]);
     }
 

@@ -74,6 +74,9 @@ class Program
     #[ORM\ManyToMany(targetEntity: Actor::class, inversedBy: 'programs')]
     private Collection $actors;
 
+    #[ORM\ManyToOne(inversedBy: 'programs')]
+    private ?User $owner = null;
+
     public function __construct()
     {
         $this->seasons = new ArrayCollection();
@@ -220,6 +223,18 @@ class Program
     public function removeActor(Actor $actor): static
     {
         $this->actors->removeElement($actor);
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): static
+    {
+        $this->owner = $owner;
 
         return $this;
     }

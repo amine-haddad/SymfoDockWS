@@ -9,6 +9,20 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+    role_hierarchy:
+            ROLE_CONTRIBUTOR: ROLE_USER
+            ROLE_ADMIN: ROLE_CONTRIBUTOR
+    access_control:
+            - { path: ^/program/new, roles: ROLE_CONTRIBUTOR }
+            - { path: ^/program/[a-zA-Z_0-9-]+/edit, roles: ROLE_CONTRIBUTOR }
+            - { path: ^/[a-zA-Z_0-9-]+/programs/new, roles: ROLE_CONTRIBUTOR }
+            - { path: ^/[a-zA-Z_0-9-]+/programs/[a-zA-Z_0-9-]+/edit, roles: ROLE_CONTRIBUTOR }
+            - { path: ^/[a-zA-Z_0-9-]+/season, roles: ROLE_CONTRIBUTOR }
+            - { path: ^/[a-zA-Z_0-9-]+/season/new, roles: ROLE_CONTRIBUTOR }
+            - { path: ^/[a-zA-Z_0-9-]+/season/[a-zA-Z_0-9-]+/edit, roles: ROLE_CONTRIBUTOR }
+            - { path: ^/[a-zA-Z_0-9-]+/episode, roles: ROLE_CONTRIBUTOR }
+            - { path: ^/[a-zA-Z_0-9-]+/episode/new, roles: ROLE_CONTRIBUTOR }
+            - { path: ^[/a-zA-Z_0-9-]+/episode/[a-zA-Z_0-9-]+/edit, roles: ROLE_CONTRIBUTOR }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -33,9 +47,7 @@ security:
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
-    access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+    
 
 when@test:
     security:

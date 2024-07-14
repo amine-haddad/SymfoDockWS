@@ -2,24 +2,13 @@
 
 namespace App\DataFixtures;
 
-use App\DataFixtures\CategoryFixtures;
 use App\Entity\Program;
-use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-/**
- * Class ProgramFixtures
- *
- * This class is responsible for creating and persisting Program entities in the database.
- * It uses Doctrine's ObjectManager to interact with the database and Faker to generate random data.
- *
- * @package App\DataFixtures
- */
 class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
     private SluggerInterface $slugger;
@@ -28,11 +17,7 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
     {
         $this->slugger = $slugger;
     }
-    /**
-     * Load data fixtures with the passed EntityManager
-     *
-     * @param ObjectManager $manager
-     */
+
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_FR');
@@ -41,12 +26,15 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
         for ($i = 1; $i <= 10; $i++) {
             $program = new Program();
             $program->setTitle($faker->words($faker->numberBetween(1, 3), true));
-            $slugTitle =$this->slugger->slug($program->getTitle());
+            $slugTitle = $this->slugger->slug($program->getTitle())->lower();
             $program->setSlug($slugTitle);
             $program->setSynopsis($faker->paragraphs(2, true));
             $program->setCategory($this->getReference('category_' . $faker->numberBetween(1, 15)));
-            
-            // $program->setPoster($programData['poster']); // Adding poster to the program
+            $program->setPoster($faker->imageUrl(640, 480, 'cinema'));
+
+            // Assign a random owner from the users
+            $userReference = $faker->randomElement(['user_contributor', 'user_admin']);
+            $program->setOwner($this->getReference($userReference));
 
             $manager->persist($program);
             $this->addReference('program_' . $i, $program);
@@ -55,16 +43,11 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
-    /**
-     * This method must return an array of fixtures classes
-     * on which the implementing class depends on.
-     *
-     * @return array
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             CategoryFixtures::class,
+            UserFixtures::class,
         ];
     }
 }

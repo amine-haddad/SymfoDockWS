@@ -23,6 +23,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
@@ -106,6 +107,7 @@ class ProgramController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $slug = $slugger->slug($program->getTitle());
             $program->setSlug($slug);
+            $program->setOwner($this->getUser());
             $entityManager->persist($program);
             $entityManager->flush();
             /*$email = (new Email())
@@ -130,7 +132,10 @@ class ProgramController extends AbstractController
     {
         $form = $this->createForm(ProgramType::class, $program);
         $form->handleRequest($request);
-
+        if ($this->getUser() !== $program->getOwner()) {
+            // If not the owner, throws a 403 Access Denied exception
+            throw $this->createAccessDeniedException('Only the owner can edit the program!');
+        }
         if ($form->isSubmitted() && $form->isValid()) {
             $program->setSlug($slugger->slug($program->getTitle())); // Mettre à jour le slug si nécessaire
 
@@ -172,12 +177,12 @@ class ProgramController extends AbstractController
         ]);
     }
 
-    #[Route("/{slug}/comment/{comment_id}", name: "program_show_comment", methods: ['GET'])]
+    #[Route("/{slug}/season/{season_id}/episode/{slugy}/comment/{comment_id}", name: "show_comment", methods: ['GET'])]
     public function showProgramComment(
         #[MapEntity(mapping: ['slug' => 'slug'])] Program $program,
         //#[MapEntity(mapping: ['comment_id' => 'id'])] Comment $comment
     ): Response {
-        return $this->render('comment.html.twig', [
+        return $this->render('comment/show.html.twig', [
             'program' => $program,
             //'comment' => $comment,
         ]);
@@ -272,7 +277,14 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/{slug}/delete', name: 'delete', methods: ['POST'])]
-    public function delete(Request $request, Program $program, EntityManagerInterface $entityManager): Response
+    public function delete(
+        Request $request,
+         EntityManagerInterface $entityManager,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Program $program,
+        #[MapEntity(mapping: ['season_id' => 'id'])] Season $season,
+       
+        
+         ): Response
     {
         // Vérifiez si le token CSRF est valide
         if ($this->isCsrfTokenValid('delete' . $program->getId(), $request->request->get('_token'))) {
@@ -283,5 +295,24 @@ class ProgramController extends AbstractController
         }
 
         return $this->redirectToRoute('program_index');
+    }
+
+    #[Route('/{slug}/season/{season_id}/episode/{slugy}/comment/{comment_id}/delete', name: 'delete_comment', methods: ['POST'])]
+    public function deleteComment(Request $request,#[MapEntity(mapping: ['comment_id' => 'id'])] Comment $comment, EntityManagerInterface $entityManager): Response
+    {
+        
+
+        if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($comment);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Comment deleted successfully.');
+        }
+
+        return $this->redirectToRoute('program_episode_show', [
+            'slug' => $comment->getEpisode()->getSeason()->getProgram()->getSlug(),
+            'season_id' => $comment->getEpisode()->getSeason()->getId(),
+            'slugy' => $comment->getEpisode()->getSlug(),
+        ]);
     }
 }

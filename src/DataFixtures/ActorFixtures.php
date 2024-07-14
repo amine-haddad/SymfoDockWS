@@ -25,6 +25,8 @@ class ActorFixtures extends Fixture implements DependentFixtureInterface
         for ($i = 1; $i <= 10; $i++) {
             $actor = new Actor();
             $actor->setName($this->faker->name());
+            $slugName = $this->slugger->slug($actor->getName());
+            $actor->setSlug($slugName);
             $manager->persist($actor);
     
             // Ajout de l'acteur à un ou plusieurs programmes

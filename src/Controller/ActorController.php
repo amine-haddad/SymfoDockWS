@@ -17,7 +17,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[Route('/actor', name: 'actor_')]
 class ActorController extends AbstractController
 {
-    #[Route('/', name: 'index')]
+    #[Route('/', name: 'index', methods: ['GET'])]
     public function index(ActorRepository $actorRepository): Response
     {
         $actors = $actorRepository->findAll();

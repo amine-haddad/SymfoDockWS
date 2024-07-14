@@ -6,67 +6,100 @@
 {% endblock %}
 
 {% block body %}
-    <!-- Display a card with episode details -->
     <div class="container-fluid d-flex flex-column min-vh-100">
-        <div class="card">
-            <div class="row">
-                <div class="col-4 d-flex justify-content-center ">
-                    <!-- Display program poster if available, else default image -->
-                    {% if program.poster is empty %}
-                        <div class="shadow">
-                            <img src="{{ asset('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid mx-auto" alt="{{ program.title }}"></div>
-                        {% else %}
-                            <div class="shadow">
-                               
-                        <img src="{{ vich_uploader_asset(program) }}" class="img-fluid rounded mx-auto" alt="{{ program.title }}"></div>
-                            {% endif %}
+        <div class="container mb-4">
+            <div class="row pt-3 d-flex justify-content-center">
+                <!-- Display program poster if available, else default image -->
+                <div class="col-md-4 text-center">
+                    <div class="shadow-lg">
+                        {% if program.poster is empty %}
+                            <img
+                            src="{{ asset('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid" alt="{{ program.title }}">
+                                {% else %}
+                                <img src="{{ vich_uploader_asset(program) }}" class="img-fluid rounded" alt="{{ program.title }}">
+                                {% endif %}
+                            </div>
                         </div>
-                        <div class="col-8 align-self-center">
+                        <div class="col-md-8 d-flex flex-column align-items-center">
                             <!-- Display program title, season number, episode number, and title -->
-                            <h1 class="d-flex m-5 justify-content-center ">
+                            <h1 class="m-3 text-center">
                                 {{ program.title }}
                             </h1>
-                            <h3 class="d-flex m-2 justify-content-start ">
+                            <span class="m-2">
                                 Saison :
                                 {{ season.number }}
-                            </h3>
-                            <h2 class="d-flex m-2 justify-content-start ">
+                            </span>
+                            <h2 class="m-2 text-center">
                                 {{ episode.title }}
-                                / Épisode :
-                                {{ episode.number }}
                             </h2>
-                            <p class="d-flex m-2 justify-content-start fst-italic">
+                            <span>
+                                Épisode :
+                                {{ episode.number }}
+                            </span>
+                            <p class="m-2 fst-italic text-center">
                                 Synopsis :
                             </p>
-                            <p class="d-flex m-2 justify-content-start ">
+                            <p class="m-2 text-center">
                                 {{ episode.synopsis }}
                             </p>
-                            <p class="d-flex m-2 justify-content-start ">
+                            <p class="m-2">
                                 {{ episode.duration }}
                                 min
                             </p>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col d-flex m-2 justify-content-start ">
+                    <div class="row mt-3">
+                        <div class="col-md-6 d-flex justify-content-center mb-2">
                             <!-- Display a link to return to the season page -->
-                            {#{% if episode.videoUrl %}
-                                <video controls>
-                                <source src="{{ asset(episode.videoUrl) }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                                </video>
-                                {% else %}
-                                <p>La vidéo n'est pas disponible pour cet épisode.</p>
-                            {% endif %}#}
-                                <a href="{{ path('program_season_show', { slug: program.slug, season_id: season.id }) }}" class="btn btn-outline-light "> Back to Saisons
+                            <a href="{{ path('program_season_show', { slug: program.slug, season_id: season.id }) }}" class="btn btn-outline-light">
+                                Back to Seasons
                             </a>
                         </div>
-                        <div class="col d-flex m-2 justify-content-end">
+                        <div class="col-md-6 d-flex justify-content-center mb-2">
                             <!-- Display a link to the video playback page -->
-                            <!-- Lien vers la page de lecture de la vidéo -->
-                                <a href="{{ path('program_episode_show', { slug: program.slug, season_id: season.id, slugy: episode.slug }) }}" class="btn btn-primary "> See Vidéo
+                            <a href="{{ path('program_episode_show', { slug: program.slug, season_id: season.id, slugy: episode.slug }) }}" class="btn btn-primary">
+                                See Video
                             </a>
                         </div>
+                    </div>
+                    <div class="row mt-4 justify-content-center mb-2">
+                        <div class="col-6">
+                            {% for comment in comments|sort|reverse %}
+                                <div class="mb-3 ">
+                                    <p>
+                                        {{ comment.comment }}
+                                    </p>
+                                    <span>
+                                        {{ comment.author.email }}
+                                    </span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="container mt-4">
+                        {% if app.user is empty %}
+                            <p>
+                                Pour Ajouter un commentaire, connectez-vous!
+                            </p>
+                        {% else %}
+                            <p>
+                                Connecté en temps que :
+                                {{ app.user.email }}
+                                😊 👍
+                            </p>
+                            <!-- Form to submit a comment -->
+                            {{ form_start(form) }}
+                            <div class="mb-3">
+                                {{ form_row(form.comment) }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form_row(form.rate) }}
+                            </div>
+                            <button class="btn btn-primary">
+                                {{ button_label|default('Add Comment') }}
+                            </button>
+                            {{ form_end(form) }}
+                        {% endif %}
                     </div>
                 </div>
             </div>

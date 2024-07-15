@@ -20,6 +20,16 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[Route('/category', name: 'category_')]
 class CategoryController extends AbstractController
 {
+    private $categoryRepository;
+    private $programRepository;
+
+    public function __construct(CategoryRepository $categoryRepository, ProgramRepository $programRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+        $this->programRepository = $programRepository;
+    }
+
+    
     #[Route('/', name: 'index', methods: 'GET')]
     public function index(CategoryRepository $categoryRepository): Response
     {
@@ -56,17 +66,14 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/{slug}', name: 'show', methods: ['GET'])]
-    public function show(
-        string $categoryName,
-        #[MapEntity(mapping: ['slug' => 'slug'])] CategoryRepository $categoryRepository,
-        ProgramRepository $programRepository
-    ): Response {
-        $categories = $categoryRepository->findAll();
-        $category = $categoryRepository->findOneBy(['slug' => $categoryName]);
+    public function show(string $slug): Response
+    {
+        $categories = $this->categoryRepository->findAll();
+        $category = $this->categoryRepository->findOneBy(['slug' => $slug]);
 
         if (!$category) {
             throw $this->createNotFoundException(
-                'No category : ' . $categoryName . ' found in category\'s table.'
+                'No category : ' . $slug . ' found in category\'s table.'
             );
         }
 
@@ -77,10 +84,10 @@ class CategoryController extends AbstractController
         $previousCategory = $currentIndex > 0 ? $categories[$currentIndex - 1] : null;
         $nextCategory = $currentIndex < count($categories) - 1 ? $categories[$currentIndex + 1] : null;
 
-        $programs = $programRepository->findBy(
+        $programs = $this->programRepository->findBy(
             ['category' => $category],
             ['id' => 'DESC'], // sort by newest
-            3// limit to 3 results
+            3 // limit to 3 results
         );
 
         return $this->render('category/show.html.twig', [

@@ -9,6 +9,7 @@ use App\Entity\Program;
 use App\Entity\Season;
 use App\Form\CommentFormType;
 use App\Form\ProgramType;
+use App\Form\SearchProgramType;
 use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
 use App\Repository\SeasonRepository;
@@ -19,11 +20,11 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
@@ -47,25 +48,46 @@ class ProgramController extends AbstractController
         SeasonRepository $seasonRepository,
         EpisodeRepository $episodeRepository,
         EmailService $emailService
-        ) {
-            $this->programRepository = $programRepository;
-            $this->seasonRepository = $seasonRepository;
-            $this->episodeRepository = $episodeRepository;
-            $this->emailService = $emailService;
+    ) {
+        $this->programRepository = $programRepository;
+        $this->seasonRepository = $seasonRepository;
+        $this->episodeRepository = $episodeRepository;
+        $this->emailService = $emailService;
+    }
+    #[Route('/', name: 'index', methods: ['GET', 'POST'])]
+    public function index(SessionInterface $session, Request $request, ): Response
+    {
+
+        if (!$session->has('total')) {
+            $session->set('total', 40); // if total doesn’t exist in session, it is initialized.
         }
-        #[Route('/', name: 'index', methods: ['GET'])]
-        public function index(): Response
-        {
-           
-            $programs = $this->programRepository->findAll();
+        $total = $session->get('total'); // get actual value in session with ‘total' key.
+        // ...
+        // Create the associated Form
+        $form = $this->createForm(SearchProgramType::class);
+        // Get data from HTTP request
+        $form->handleRequest($request);
+
+        // Initialisation des programmes
+        $programs = [];
+        // Was the form is submitted?
+        if ($form->isSubmitted() && $form->isValid()) {
+            $search = $form->getData()['search'];
+            $programs = $this->programRepository->findLikeName($search);
             //dd($programs);
-            return $this->render('program/index.html.twig', [
-                'website' => 'Wild Series Docker',
-                'programs' => $programs,
-            ]);
+            //return $this->redirectToRoute('program_index', ['programs' => $programs]);
+        } else {
+            $programs = $this->programRepository->findAll();
         }
-        /**
-         * Displays a list of programs with pagination.
+        //dd($programs);
+        return $this->render('program/index.html.twig', [
+            'website' => 'Wild Series Docker',
+            'programs' => $programs,
+            'form' => $form->createView(),
+        ]);
+    }
+    /**
+     * Displays a list of programs with pagination.
      *
      * @Route("/list/{page}", requirements={"page"="\d+"}, methods={"GET"}, name="list")
      *
@@ -87,8 +109,6 @@ class ProgramController extends AbstractController
             'page' => $page,
         ]);
     }
-
-
 
     /**
      * Redirects to the show action of ProgramController for a specific program.
@@ -218,7 +238,7 @@ class ProgramController extends AbstractController
      * @throws NotFoundHttpException If the program, season, or episode is not found.
      */
     #[Route('/{slug}/season/{season_id}/episode/{slugy}', methods: ['GET', 'POST'], name: 'episode_show')]
-    public function showEpisode(Request $request,EntityManagerInterface $entityManager,
+    public function showEpisode(Request $request, EntityManagerInterface $entityManager,
         #[MapEntity(mapping: ['slug' => 'slug'])] Program $program,
         #[MapEntity(mapping: ['season_id' => 'id'])] Season $season,
         #[MapEntity(mapping: ['slugy' => 'slug'])] Episode $episode,
@@ -249,20 +269,20 @@ class ProgramController extends AbstractController
         }
 
         $comments = $episode->getComments();
-        
+
         $form = $this->createForm(CommentFormType::class, $comment);
         // Get data from HTTP request
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setAuthor($this->getUser());
             $comment->setEpisode($episode);
-            
+
             //For exemple : persiste & flush the entity
             // Persist Category Object
             $entityManager->persist($comment);
             //Flush the persisted object
             $entityManager->flush();
-            return $this->redirectToRoute('program_episode_show',['slug' => $program->getSlug(),'season_id' => $season->getId(), 'slugy'=>$episode->getSlug()]);
+            return $this->redirectToRoute('program_episode_show', ['slug' => $program->getSlug(), 'season_id' => $season->getId(), 'slugy' => $episode->getSlug()]);
         }
 
         // Render the template with the program, season, and episode
@@ -279,13 +299,11 @@ class ProgramController extends AbstractController
     #[Route('/{slug}/delete', name: 'delete', methods: ['POST'])]
     public function delete(
         Request $request,
-         EntityManagerInterface $entityManager,
+        EntityManagerInterface $entityManager,
         #[MapEntity(mapping: ['slug' => 'slug'])] Program $program,
         #[MapEntity(mapping: ['season_id' => 'id'])] Season $season,
-       
-        
-         ): Response
-    {
+
+    ): Response {
         // Vérifiez si le token CSRF est valide
         if ($this->isCsrfTokenValid('delete' . $program->getId(), $request->request->get('_token'))) {
             $entityManager->remove($program);
@@ -298,9 +316,8 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/{slug}/season/{season_id}/episode/{slugy}/comment/{comment_id}/delete', name: 'delete_comment', methods: ['POST'])]
-    public function deleteComment(Request $request,#[MapEntity(mapping: ['comment_id' => 'id'])] Comment $comment, EntityManagerInterface $entityManager): Response
+    public function deleteComment(Request $request, #[MapEntity(mapping: ['comment_id' => 'id'])] Comment $comment, EntityManagerInterface $entityManager): Response
     {
-        
 
         if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->request->get('_token'))) {
             $entityManager->remove($comment);

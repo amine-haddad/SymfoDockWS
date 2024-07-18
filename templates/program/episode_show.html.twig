@@ -12,9 +12,9 @@
             <div class="col-md-4 text-center">
                 <div class="shadow-lg">
                     {% if program.poster is empty %}
-                        <img src="{{ asset('images/the_walking_dead_saison_1.jpeg') }}" class="img-fluid" alt="{{ program.title }}">
+                        <img src="{{ asset('images/the_walking_dead_saison_1.jpeg') | imagine_filter('poster_thumbnail') }}" class="img-fluid" alt="{{ program.title }}">
                     {% else %}
-                        <img src="{{ vich_uploader_asset(program) }}" class="img-fluid rounded" alt="{{ program.title }}">
+                    <img src="{{ vich_uploader_asset(program, 'posterFile') | imagine_filter('poster_thumbnail') }}" class=" img-fluid rounded" alt="{{ program.title }}">
                     {% endif %}
                 </div>
             </div>

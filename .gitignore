@@ -25,3 +25,6 @@
 ###< symfony/asset-mapper ###
 .test_pdo.php
 public/uploads
+###> liip/imagine-bundle ###
+/public/media/cache/
+###< liip/imagine-bundle ###

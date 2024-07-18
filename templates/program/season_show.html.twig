@@ -28,7 +28,7 @@
             <div class="row mt-5">
                 <div class="col-md-4">
                     <!-- <img src="{{ episode.poster ?? '/path/to/default/poster.jpg' }}" class="img-fluid rounded" alt="{{ episode.title }} poster"> -->
-                    <img src="{{ vich_uploader_asset(program) }}" alt="{{ program.title }}">
+                    <img src="{{ vich_uploader_asset(program)| imagine_filter('poster_thumbnail') }}" alt="{{ program.title }}">
                 </div>
                 <div class="col-md-8">
                     <h3>Titre : {{ episode.title }}</h3>

@@ -20,7 +20,7 @@ class EpisodeType extends AbstractType
             ->add('duration')
             ->add('season', EntityType::class, [
                 'class' => Season::class,
-                'choice_label' => 'number',
+                'choice_label' => 'description',
             ])
         ;
     }

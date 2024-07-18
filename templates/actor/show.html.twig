@@ -7,34 +7,42 @@
 {% block body %}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-12">
+        <div class="col-12 m-2">
             <h1>{{ actor.name }}</h1>
+
+                {% if actor.photo is not null %}
+                <img src="{{ vich_uploader_asset(actor, 'photoFile') | imagine_filter('actor_thumbnail')  }}" alt="pohto_actor_{{ actor.name }}" class="img-fluid">
+
+            {% else %}
+            <img src="{{ asset('images/the_walking_dead_saison_1.jpeg')}}" class="img-fluid rounded mb-2" alt="{{ actor.name }}">
+            {% endif %}
+                
             <p><strong>Programs :</strong></p>
             <strong>Apparaît aussi dans :</strong>
-                <img src="{{ vich_uploader_asset(actor, 'photoFile') }}" alt="{{ actor.name }}">
         </div>
     </div>
     <div class="row">
         {% for program in actor.programs %}
             <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4">
-                <div class="card h-100">
-                    <img src="{{ asset('images/the_walking_dead_saison_1.jpeg') }}" class="card-img-top img-fluid rounded" alt="{{ program.title }}">
-                    <div class="card-body">
-                        <h5 class="card-title"><a href="{{ path('program_show', { slug: program.slug  }) }}"class="btn btn-outline-primary">{{ program.title }}</a></h5>
-                        <p class="card-text">Genre: {{ program.category.name }}</p>
-                        <p class="card-text"><strong>Acteurs:</strong>
-                            {% for actors in program.actors %}
-                                <span>{{ actors.name }}{% if not loop.last %}, {% endif %}</span>
-                            {% endfor %}
-                        </p>
-                        
-                    </div>
-                </div>
+                
+                    {% if program.poster is not null %}
+                    <img src="{{ vich_uploader_asset(program, 'posterFile')| imagine_filter('poster_thumbnail')  }}" class="img-fluid rounded mb-2" alt="{{ program.title }}">
+                    {% else  %}
+                    <img src="{{ asset('images/the_walking_dead_saison_1.jpeg')}}" class="img-fluid rounded mb-2" alt="{{ program.title }}">
+                    {% endif %}
+                    
+                    <h5 class=""><a href="{{ path('program_show', { slug: program.slug  }) }}" class="text-capitalize btn btn-outline-primary w-100">{{ program.title }}</a></h5>
+                    <p class="mt-2">Genre: {{ program.category.name }}</p>
+                    <p><strong>Acteurs:</strong>
+                        {% for actors in program.actors %}
+                            <span>{{ actors.name }}{% if not loop.last %}, {% endif %}</span>
+                        {% endfor %}
+                    </p>
+                
             </div>
-            
         {% else %}
             <div class="col-12">
-                <p>Aucune série pour cette Acteur</p>
+                <p>Aucune série pour cet acteur.</p>
             </div>
         {% endfor %}
     </div>

@@ -1,43 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Wild Series Programs
+{% block title %}
+    Wild Series Programs
 {% endblock %}
 
 {% block body %}
-	<h1>{{ website }}
-		- Programs</h1>
-	<h2>Toutes les séries:</h2>
-{{ app.session.get('total') }}
+    <div class="container-fluid p-2">
+        <h1>Bienvenue sur {{ website }}</h1>
+        <h2>Séries:</h2>
+        {{ app.session.get('total') }}
 
-	<div class="container">
-		<div class="row">
-			{% if programs is not empty %}
-				{% for program in programs %}
-					<div class="col-md-4 mb-4">
-						<div class="card">
-							<div class="card-inner">
-								<div class="card-front">
-									<h5 class="card-title">{{ program.title }}</h5>
-									<img src="{{ vich_uploader_asset(program) }}" class="img-fluid rounded mx-auto" alt="{{ program.title }}">
-								{# Placeholder for the image, update src attribute once you have images #}
-									{#<img src="{{ asset( program.poster) }}" class="card-img-top" alt="{{ program.title }}">#}
-								</div>
-								<div class="card-back">
-									<h5 class="card-title">{{ program.title }}</h5>
-									<h6 class="card-subtitle mb-2 text-muted">Catégorie :
-										{{ program.category.name }}</h6>
-									<p class="card-text">{{ program.synopsis }}</p>
-									<a href="{{ path('program_show', { slug: program.slug }) }}" class="btn btn-outline-dark mt-3">Voir la fiche</a>
-								</div>
-							</div>
-						</div>
-					</div>
-				{% endfor %}
-			{% else %}
-				<p>Aucune série trouvée.</p>
-			{% endif %}
-		</div>
-	</div>
+        {% set categories = {} %}
+        {% for program in programs %}
+            {% set categories = categories|merge({ (program.category.name): (categories[program.category.name] is defined ? categories[program.category.name]|merge([program]) : [program]) }) %}
+        {% endfor %}
 
-	<a href="{{ path('app_index') }}" class="btn btn-secondary mt-3">Retour à l'accueil</a>
+        {% for category, programs in categories %}
+            <div class="category-section mb-5">
+                <h3 class="category-title">{{ category }}</h3>
+                <div class="program-list d-flex">
+                    {% for program in programs %}
+                        <div class="card program-card ms-2">
+                            <a href="{{ path('program_show', { 'slug': program.slug }) }}">
+                                    <img src="{{ vich_uploader_asset(program, 'posterFile')| imagine_filter('poster_thumbnail') }}" class="card-img-top img-fluid rounded" alt="{{ program.title }}">
+								</a>
+							<div class="card-title text-uppercase">{{ program.title }}</div>
+                        </div>
+                    {% else %}
+                        <p>No programs found for category: {{ category }}.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+
+        <a href="{{ path('app_index') }}" class="btn btn-dark mt-3">Retour à l'accueil</a>
+    </div>
 {% endblock %}

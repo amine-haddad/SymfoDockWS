@@ -1,3 +1,5 @@
+{# templates/program/index.html.twig #}
+
 {% extends 'base.html.twig' %}
 
 {% block title %}
@@ -10,11 +12,15 @@
         <h2>Séries:</h2>
         {{ app.session.get('total') }}
 
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <input type='submit' value="Rechercher">
+        {{ form_end(form) }}
+
         {% set categories = {} %}
         {% for program in programs %}
             {% set categories = categories|merge({ (program.category.name): (categories[program.category.name] is defined ? categories[program.category.name]|merge([program]) : [program]) }) %}
         {% endfor %}
-
         {% for category, programs in categories %}
             <div class="category-section mb-5">
                 <h3 class="category-title">{{ category }}</h3>
@@ -22,9 +28,9 @@
                     {% for program in programs %}
                         <div class="card program-card ms-2">
                             <a href="{{ path('program_show', { 'slug': program.slug }) }}">
-                                    <img src="{{ vich_uploader_asset(program, 'posterFile')| imagine_filter('poster_thumbnail') }}" class="card-img-top img-fluid rounded" alt="{{ program.title }}">
-								</a>
-							<div class="card-title text-uppercase">{{ program.title }}</div>
+                                <img src="{{ vich_uploader_asset(program, 'posterFile')| imagine_filter('poster_thumbnail') }}" class="card-img-top img-fluid rounded" alt="{{ program.title }}">
+                            </a>
+                            <div class="card-title text-uppercase">{{ program.title }}</div>
                         </div>
                     {% else %}
                         <p>No programs found for category: {{ category }}.</p>

@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My-Profil{% endblock %}
+
+{% block body %}
+    {% if is_granted('ROLE_CONTRIBUTOR') or is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') %}
+			{{app.user.email}}       
+<p>Mes commentaires:</p>
+            {% for comment in app.user.comments %}
+<p>commentaire que vous avez postez :</p>
+        <ul>
+        <li>
+        {{ comment.comment}}- à propos de l'episode :{{ comment.episode.title }}
+        </li>
+        </ul>
+        
+				 
+			 {% endfor %}
+			<p>Email:
+				{{ app.user.email }}</p>
+		{% endif %}
+{% endblock %}

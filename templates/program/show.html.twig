@@ -1,97 +1,69 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Série #
-    {{ program.id }}
+    Série #{{ program.id }}
 {% endblock %}
 
 {% block body %}
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-4 ">
+        <div class="row mt-5">
+            <div class="col-md-4">
                 <!-- Display the program's image with alt attribute set to program title -->
-            <img src="{{ vich_uploader_asset(program) }}" alt="{{ program.title }}"></div>
-                <div class="col-md-8">
-                    <h1>
-                        {{ program.title }}
-                    </h1>
-                    <p>
-                        {{ program.synopsis }}
-                    </p>
-                    <!--calling the service ProgramDuration from ProgramController->show() -->
-                    <p class"p-3 mb-2" ><span class="badge bg-info mb-2 p-2">
-                        {{ programDuration }}</span>
-                    </p>
-                    <p>Total SeasonT ime: {% for season in seasons %}
-                        {% for episode in season.episodes %}
-                        {{episode.duration}}min.
-                        
-                    {% endfor %}
-                {% endfor %} </p>
-                    <p>
-                        <strong>
-                            Catégorie :
-                        </strong>
-                        <!-- Display the program's category name -->
-                        {{ program.category.name }}
-                    </p>
-                    <strong>
-                        Acteurs :
-                    </strong>
-                    <ul>
-                        {% for actor in program.actors %}
-                            <li>
-                             
-                                {{ actor.name }}
-                            </li>
-                            <a href="{{ path('actor_show', {'slug': actor.slug}) }}" class="btn btn-outline-primary">
-                                Filmographie
+                <img src="{{ vich_uploader_asset(program, 'posterFile')| imagine_filter('poster_thumbnail') }}" class="img-fluid rounded mb-2" alt="{{ program.title }}">
+            </div>
+            <div class="col-md-8">
+                <h1>{{ program.title }}</h1>
+                <p>{{ program.synopsis }}</p>
+                <!--calling the service ProgramDuration from ProgramController->show() -->
+                <p class="p-3 mb-2">
+                    <span class="badge bg-info mb-2 p-2">{{ programDuration }}</span>
+                </p>
+                <p>Catégorie : <strong>{{ program.category.name }}</strong></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <h2>Saisons :</h2>
+                <div class="row list-group">
+                    <!-- Loop through the seasons of the program -->
+                    {% for season in seasons %}
+                        <span class="col list-group-item">
+                            <!-- Link to the season show page with programId and seasonId as parameters -->
+                            <a href="{{ path('program_season_show', { slug: program.slug , season_id: season.id }) }}" class="btn btn-primary">
+                                Saison {{ season.number }}
                             </a>
-                        {% else %}
-                            <li>
-                                Aucun acteur pour cette série
-                            </li>
-                        {% endfor %}
-                    </ul>
+                        </span>
+                    {% else %}
+                        <div class="list-group-item">Aucune saison disponible pour cette série.</div>
+                    {% endfor %}
                 </div>
             </div>
-            <div class="row">
-                <div class="col-8">
-                    <h2>
-                        Saisons :
-                    </h2>
-                    <ul class="list-group">
-                        <!-- Loop through the seasons of the program -->
-                        {% for season in seasons %}
-                            <li class="list-group-item">
-                                <!-- Link to the season show page with programId and seasonId as parameters -->
-                                <a href="{{ path('program_season_show', { slug: program.slug , season_id: season.id }) }}">
-                                    Saison
-                                    {{ season.number }}
+            <div class="col-8">
+                <p>Acteurs :</p>
+                <div class="row">
+                    {% for actor in program.actors %}
+                        <div class="card_actors col-2 m-2 justify-content-between">
+                            <div class="card_actor p-2">
+                                <a href="{{ path('actor_show', {'slug': actor.slug}) }}" class="">
+                                    <img src="{{ vich_uploader_asset(actor, 'photoFile') | imagine_filter('actor_thumbnail') }}" alt="photo_actor_{{ actor.name }}" class="img-fluid rounded_actor">
                                 </a>
-                            </li>
-                        <!-- If no seasons are available, display a message -->
-                            {% else %}
-                            <li class="list-group-item">
-                                Aucune saison disponible pour cette série.
-                            </li>
-                        {% endfor %}
-                    </ul>
+                            </div>
+                            <div class="card-title text-uppercase text-center">
+                                    <strong>{{ actor.name }}</strong>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div>Aucun acteur pour cette série</div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
 
-        <div class="mt-4">
+        <div class="m-5">
             <!-- Links to different categories pages -->
-            <a href="{{ path('category_index') }}" class="btn btn-outline-dark">
-                Retour aux Catégories
-            </a>
-            <a href="{{ path('program_index') }}" class="btn btn-outline-dark">
-                Retour aux Programmes
-            </a>
-            <a href="{{ path('app_index') }}" class="btn btn-outline-dark">
-                Accueil
-            </a>
+            <a href="{{ path('category_index') }}" class="btn btn-success me-3">Retour aux Catégories</a>
+            <a href="{{ path('program_index') }}" class="btn btn-primary me-3">Retour aux Programmes</a>
+            <a href="{{ path('app_index') }}" class="btn btn-dark">Accueil</a>
         </div>
-    {% endblock %}
-    
+    </div>
+{% endblock %}

@@ -31,6 +31,10 @@ class Category
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $slug = null;
 
+    public function __tostring(){
+        return $this->name;
+    }
+
     public function __construct()
     {
         $this->programs = new ArrayCollection();

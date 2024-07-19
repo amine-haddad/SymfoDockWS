@@ -21,7 +21,7 @@
 		</header>
 
 		{# Include the navbar component #}
-		{% include '/components/_navbar.html.twig' %}
+		{% include '/components/_navbar.html.twig' %}{{ component('LastEpisode') }}
 		{% for category, messages in app.flashes(['success', 'warning','danger']) %}
 			{% for message in messages %}
 				<div class="alert alert-{{ category }}">
@@ -32,7 +32,8 @@
 		<main
 			class="flex-shrink-0">
 			{# Main content block #}
-			{% block body %}{% endblock %}
+			{% block body %}
+		{% endblock %}
 		</main>
 
 		<footer>

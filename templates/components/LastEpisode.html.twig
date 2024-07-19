@@ -1,0 +1,45 @@
+<div{{ attributes }}>
+<button class="btn btn-primary m-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">Last Episodes</button>
+
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Backdrop with scrolling</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+  
+<h2>Derniers 3 Épisodes</h2>
+    <ul>
+        {% for episode in this.LastEpisode %}
+        <div class="card mb-3">
+        {% if episode.season.program.poster is empty %}
+        <img src="{{ asset('images/the_walking_dead_saison_1.jpeg') | imagine_filter('poster_thumbnail') }}" class="img-fluid" alt="{{ episode.season.program.title }}">
+    {% else %}
+    <img src="{{ vich_uploader_asset(episode.season.program, 'posterFile') | imagine_filter('poster_thumbnail') }}" class=" img-fluid rounded" alt="{{ episode.season.program.title }}">
+    {% endif %}
+  <div class="card-body">
+<li class="list-group-item Text-capitalize">serie:({{ episode.season.program.title}})</li>
+    <h5 class="card-title">{{ episode.title }}</h5>
+    <p class="card-text">{{ episode.synopsis }}</p>
+  </div>
+  <ul class="list-group list-group-flush">
+<li class="list-group-item"> episode-{{ episode.number}}</li>
+    <li class="list-group-item">
+        {{ episode.season.number}} {{episode.season.description }}  
+  
+    </li>
+    <li class="list-group-item"> {{ episode.duration}}.min</li>
+<li class="list-group-item"> {{ episode.season.year}}</li>
+  </ul>
+  <div class="card-body">
+    <a href="{{ path('program_episode_show', { slug:episode.season.program.slug, season_id:episode.season.id, slugy: episode.slug }) }}" class="btn btn-primary">See Video</a>
+    <a href="#" class="card-link">Card link</a>
+  </div>
+</div>
+
+        {% endfor %}
+    </ul>
+
+  </div>
+</div>
+</div>

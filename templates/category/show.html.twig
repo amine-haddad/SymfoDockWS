@@ -12,29 +12,18 @@
         </h3>
 
         <!-- List of programs under the current category -->
+    <h2 class="text-center text-uppercase">Series</h2>
         <div class="program-list mt-4">
-            <h2>Programs</h2>
-            <div class="d-flex flex-row flex-nowrap overflow-auto">
+                <div class="program-list d-flex">
                 {% for program in programs %}
-                    <div class="card mx-2" style="min-width: 200px; max-width: 300px;">
-                        <div class="card-inner">
-                            <!-- Front face of the card -->
-                            <div class="card-front">
-                                <a href="{{ path('program_show', { 'slug': program.slug }) }}">
-                                    <img src="{{ vich_uploader_asset(program, 'posterFile') | imagine_filter('poster_thumbnail') }}" class="card-img-top img-fluid rounded" alt="{{ program.title }}">
-                                </a>
-                            </div>
-                            <!-- Back face of the card -->
-                            <div class="card-back">
-                                <h5 class="card-title">{{ program.title }}</h5>
-                                <p class="card-text">{{ program.synopsis }}</p>
-                            </div>
-                        </div>
+                    <div class="card program-card ms-2">
+                        <a href="{{ path('program_show', { 'slug': program.slug }) }}">
+                            <img src="{{ vich_uploader_asset(program, 'posterFile')| imagine_filter('poster_thumbnail') }}" class="card-img-top img-fluid rounded" alt="{{ program.title }}">
+                        </a>
+                        <div class="card-title text-uppercase">{{ program.title }}</div>
                     </div>
                 {% else %}
-                    <div>
-                        <p>No programs found for category: {{ category.name }}.</p>
-                    </div>
+                    <p>No programs found for category: {{ category }}.</p>
                 {% endfor %}
             </div>
         </div>

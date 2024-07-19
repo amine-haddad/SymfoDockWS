@@ -7,7 +7,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     margin: 20px;
-    background-color: #d4c011;
+    background-color: #bebeb6;
     color: #030518;
 }
 
@@ -19,8 +19,6 @@ body {
 
 // Footer styles
 .footer {
-    background-color: #ffc107;
-    color: #000;
     padding: 1rem 0;
     bottom: 0;
     width: 100%;
@@ -36,7 +34,7 @@ body {
     background-color: #2e2272;
     color: #dbd7d7;
     height: auto;
-    border: 0.1rem solid #080808;
+    border: 0.1rem solid #dbdbd2;
     border-radius: 0.5rem;
     overflow: hidden;
     min-width: 200px;
@@ -61,7 +59,7 @@ body {
     height: auto;
     max-height: 50vh;
     object-fit: contain;
-    border-bottom: 0.1rem solid #ddd;
+    border-bottom: 0.1rem solid #f0e8e8;
 }
 
 // Card content
@@ -73,6 +71,7 @@ body {
 // Hover effect for card enlargement
 .card:hover {
     transform: scale(1.05);
+    border: 0.2rem solid #e6e7ee;
 }
 
 .card_actors:hover {

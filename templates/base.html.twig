@@ -15,7 +15,7 @@
 
 		{% endblock %}
 	</head>
-	<body>
+	<body {{ stimulus_controller('theme') }} {{ stimulus_target('theme', 'body') }}>
 		<header>
 			{# Content of your header if necessary #}
 		</header>

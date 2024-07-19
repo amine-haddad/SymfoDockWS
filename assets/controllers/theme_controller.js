@@ -11,18 +11,25 @@ import { Controller } from '@hotwired/stimulus';
  */
 export default class extends Controller {
     static targets = ["body"];
-    darkMode = false;
+
     connect() {
-        this.darkMode = JSON.parse(localStorage.getItem('darkMode')) ? false :
-            this.updateTheme();
-    }
-    toggleDarkMode(event) {
-        this.darkMode = !this.darkMode;
-        localStorage.setItem('darkMode', this.darkMode);
-        this.updateTheme();
+        // Récupère le mode sombre à partir du localStorage
+        const darkMode = JSON.parse(localStorage.getItem('darkMode'));
+        // Applique le thème correspondant
+        this.updateTheme(darkMode !== null ? darkMode : false);
     }
 
-    updateTheme() {
-        this.bodyTarget.setAttribute('data-bs-theme', this.darkMode ? 'dark' : '');
+    toggleDarkMode(event) {
+        // Inverse le mode sombre
+        this.darkMode = !this.darkMode;
+        // Stocke la nouvelle valeur dans le localStorage
+        localStorage.setItem('darkMode', this.darkMode);
+        // Met à jour le thème
+        this.updateTheme(this.darkMode);
+    }
+
+    updateTheme(darkMode) {
+        // Ajoute ou enlève l'attribut data-bs-theme en fonction du mode sombre
+        this.bodyTarget.setAttribute('data-bs-theme', darkMode ? 'dark' : '');
     }
 }

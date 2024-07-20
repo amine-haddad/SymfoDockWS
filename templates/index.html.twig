@@ -10,7 +10,8 @@
                 <img src="{{ asset('images/duck.png') }}" class="card-img-top img-fluid" alt="Ducky Image">
                 <div class="card-body">
                     <h2 class="card-title text-center">Bienvenue sur {{ website }}</h2>
-                    <p class="card-text text-center">DUCKY</p>
+                    <p class="card-text text-center">DUCKY{{ component('ProgramSearch') }}</p>
+                    
                     <div class="text-center">
                         <a href="{{ path('program_index') }}" class="btn btn-outline-dark">Voir les séries</a>
                     </div>

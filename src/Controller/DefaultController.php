@@ -2,16 +2,29 @@
 //src/Controller/DefaultController.php
 namespace App\Controller;
 
+use App\Repository\ProgramRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 class DefaultController extends AbstractController
 
 {
+    
+    private $programRepository;
+
+    public function __construct(
+        ProgramRepository $programRepository,
+    
+    ) {
+        $this->programRepository = $programRepository;
+    }
+      
     #[Route('/', name: 'app_index')]
     public function index(): Response
     {
-        return $this->render('index.html.twig', [
+        $program = $this->programRepository->findAll();
+                return $this->render('index.html.twig', [
+            'programs' => $program,
             'website' => 'Wild Series Docker',
          ]);
     }

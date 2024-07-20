@@ -13,7 +13,10 @@ liip_imagine:
             quality: 75
             filters:
                 thumbnail: { size: [200, 300], mode: outbound } # Taille d'affiche définie
+                interlace: { mode: line }
         actor_thumbnail:
             quality: 75
             filters:
                 thumbnail: { size: [150, 200], mode: outbound } # Taille de portrait définie
+                interlace: { mode: line }
+                

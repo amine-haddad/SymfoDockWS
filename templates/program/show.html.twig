@@ -43,7 +43,7 @@
                 <div class="row">
                     {% for actor in program.actors %}
                         <div class="card_actors col-2 m-2 justify-content-between">
-                            <div class="card_actor p-2">
+                            <div class="card_actor p-2 mx-auto">
                                 <a href="{{ path('actor_show', {'slug': actor.slug}) }}" class="">
                                 {% if actor.photo is not empty  %}
                                 <img src="{{ vich_uploader_asset(actor, 'photoFile')| imagine_filter('actor_thumbnail') }}" alt="photo_actor_{{ actor.name }}" class="img-fluid rounded_actor">

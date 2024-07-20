@@ -3,17 +3,20 @@
 {% block title %}Wild Series{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <img src="{{ asset('images/duck.png') }}" class="card-img-top img-fluid" alt="Ducky Image">
+<div class="container-fluid mt-2">
+    <div class="row ">
+        <div class="col">
+            <div class="">
+                {{ component('ProgramSearch') }}
+            </div>
+            <div class="card mx-auto m-4">
+                <img src="{{ asset('images/duck.png') }}" class="card-img-top img-fluid pt-4" alt="Ducky Image">
                 <div class="card-body">
                     <h2 class="card-title text-center">Bienvenue sur {{ website }}</h2>
-                    <p class="card-text text-center">DUCKY{{ component('ProgramSearch') }}</p>
+                    <p class="card-text text-center">DUCKY</p>
                     
                     <div class="text-center">
-                        <a href="{{ path('program_index') }}" class="btn btn-outline-dark">Voir les séries</a>
+                        <a href="{{ path('program_index') }}" type="button"  class="btn btn-primary btn-box-shadow">Voir les séries</a>
                     </div>
                 </div>
             </div>

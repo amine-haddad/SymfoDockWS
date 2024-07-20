@@ -1,0 +1,37 @@
+<div{{ attributes }}>
+    <div class="mb-3">
+
+        <label class="form-label" for="search">
+
+            Search a progam in our catalogue
+        </label>
+
+        <input type="search" id="search" class="form-control" data-model="query"></div>
+
+        {% for program in this.programs %}
+
+            <article>
+
+                <h2 class="mt-4">
+                    {{ program.id }}
+                    /
+                    {{ program.title }}
+                    -
+                        
+                    Category:
+                    {{ program.category.name }}
+                </h2>
+
+                <p>
+                    {{ program.synopsis }}
+                </p>
+                   
+                <a href="{{ path("program_show", {slug:program.slug }) }}">
+                    see more
+                </a>
+
+            </article>
+
+        {% endfor %}
+    </div>
+    

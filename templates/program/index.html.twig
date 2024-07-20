@@ -8,22 +8,23 @@
 
 {% block body %}
     <div class="container-fluid p-2">
-        <h1>Bienvenue sur {{ website }}</h1>
-        <h2>Séries:</h2>
-        {{ app.session.get('total') }}
 
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <input type='submit' value="Rechercher">
-        {{ form_end(form) }}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <input type='submit' value="Rechercher">
+    {{ form_end(form) }}
+
+        <h1 class="text-uppercase text-center text-decoration-underline">Bienvenue sur {{ website }}</h1>
+        <h2 class="text-lowercase text-center">Search Séries</h2>
 
         {% set categories = {} %}
         {% for program in programs %}
             {% set categories = categories|merge({ (program.category.name): (categories[program.category.name] is defined ? categories[program.category.name]|merge([program]) : [program]) }) %}
         {% endfor %}
+
         {% for category, programs in categories %}
             <div class="category-section mb-5">
-                <h3 class="category-title">{{ category }}</h3>
+                <h3 class="category-title text-decoration-underline text-uppercase ">{{ category }}</h3>
                 <div class="program-list d-flex">
                     {% for program in programs %}
                         <div class="card program-card ms-2">

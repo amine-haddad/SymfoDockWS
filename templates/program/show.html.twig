@@ -12,17 +12,17 @@
                 <img src="{{ vich_uploader_asset(program, 'posterFile')| imagine_filter('poster_thumbnail') }}" class="img-fluid rounded mb-2" alt="{{ program.title }}">
             </div>
             <div class="col-md-8">
-                <h1>{{ program.title }}</h1>
+                <h1 class="text-uppercase text-decoration-underline">{{ program.title }}</h1>
                 <p>{{ program.synopsis }}</p>
                 <!--calling the service ProgramDuration from ProgramController->show() -->
                 <p class="p-3 mb-2">
                     <span class="badge bg-info mb-2 p-2">{{ programDuration }}</span>
                 </p>
-                <p>Catégorie : <strong>{{ program.category.name }}</strong></p>
+                <p>Catégorie : <strong class="text-lowercase text-decoration-underline">{{ program.category.name }}</strong></p>
             </div>
         </div>
         <div class="row">
-            <div class="col-4">
+            <div class="col-2">
                 <h2>Saisons :</h2>
                 <div class="row list-group">
                     <!-- Loop through the seasons of the program -->
@@ -38,7 +38,7 @@
                     {% endfor %}
                 </div>
             </div>
-            <div class="col-8">
+            <div class="col-10">
                 <p>Acteurs :</p>
                 <div class="row">
                     {% for actor in program.actors %}

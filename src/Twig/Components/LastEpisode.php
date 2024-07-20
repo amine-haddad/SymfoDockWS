@@ -2,7 +2,6 @@
 
 namespace App\Twig\Components;
 
-use App\Entity\Episode;
 use App\Repository\EpisodeRepository;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 

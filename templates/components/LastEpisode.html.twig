@@ -8,8 +8,8 @@
   </div>
   <div class="offcanvas-body">
   
-<h2>Derniers 3 Épisodes</h2>
-    <ul>
+<h2 class=" m-3 text-capitalize text-center">3 Dernier Épisodes</h2>
+    <ul class=" mt-3">
         {% for episode in this.LastEpisode %}
         <div class="card mb-3">
         {% if episode.season.program.poster is empty %}
@@ -32,8 +32,8 @@
 <li class="list-group-item"> {{ episode.season.year}}</li>
   </ul>
   <div class="card-body">
-    <a href="{{ path('program_episode_show', { slug:episode.season.program.slug, season_id:episode.season.id, slugy: episode.slug }) }}" class="btn btn-primary">See Video</a>
-    <a href="#" class="card-link">Card link</a>
+    <a href="{{ path('program_episode_show', { slug:episode.season.program.slug, season_id:episode.season.id, slugy: episode.slug }) }}" class="btn btn-primary text-capitalize p-2 m-1">Go to Episode</a>
+  <a href="{{ path('program_show', { slug:episode.season.program.slug}) }}" class="btn btn-primary text-capitalize p-2 m-1">go to Serie</a>
   </div>
 </div>
 

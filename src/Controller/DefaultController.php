@@ -19,7 +19,7 @@ class DefaultController extends AbstractController
         $this->programRepository = $programRepository;
     }
       
-    #[Route('/', name: 'app_index')]
+    #[Route('/', name: 'app_index', methods: ['GET'])]
     public function index(): Response
     {
         $program = $this->programRepository->findAll();

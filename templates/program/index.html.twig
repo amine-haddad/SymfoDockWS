@@ -9,33 +9,46 @@
 {% block body %}
     <div class="container-fluid p-2">
 
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <input type='submit' value="Rechercher">
-    {{ form_end(form) }}
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <input type='submit' value="Rechercher">
+        {{ form_end(form) }}
 
         <h1 class="text-uppercase text-center text-decoration-underline">Bienvenue sur {{ website }}</h1>
         <h2 class="text-lowercase text-center">Search Séries</h2>
+        {% if app.user and app.user.watchlist is not empty %}
+    <a  href="{{ path('watchlist') }}" class="btn btn-secondary text-lowercase text-center">Voir ma Watch List</a>
+    {% endif %}
+        
 
         {% set categories = {} %}
         {% for program in programs %}
-            {% set categories = categories|merge({ (program.category.name): (categories[program.category.name] is defined ? categories[program.category.name]|merge([program]) : [program]) }) %}
+            {% set categoryName = program.category.name %}
+            {% if categories[categoryName] is not defined %}
+                {% set categories = categories|merge({ (categoryName): [program] }) %}
+            {% else %}
+                {% set categories = categories|merge({ (categoryName): categories[categoryName]|merge([program]) }) %}
+            {% endif %}
         {% endfor %}
 
         {% for category, programs in categories %}
             <div class="category-section mb-5">
-                <h3 class="category-title text-decoration-underline text-uppercase ">{{ category }}</h3>
+                <h3 class="category-title text-decoration-underline text-uppercase">{{ category }}</h3>
                 <div class="program-list d-flex">
-                    {% for program in programs %}
-                        <div class="card program-card ms-2">
-                            <a href="{{ path('program_show', { 'slug': program.slug }) }}">
-                                <img src="{{ vich_uploader_asset(program, 'posterFile')| imagine_filter('poster_thumbnail') }}" class="card-img-top img-fluid rounded" alt="{{ program.title }}">
-                            </a>
-                            <div class="card-title text-uppercase">{{ program.title }}</div>
-                        </div>
+                    {% if programs is not empty %}
+                        {% for program in programs %}
+                            <div class="card program-card ms-2">
+                                <a href="{{ path('program_show', { 'slug': program.slug }) }}">
+                                    <img src="{{ vich_uploader_asset(program, 'posterFile')|imagine_filter('poster_thumbnail') }}" class="card-img-top img-fluid rounded" alt="{{ program.title }}">
+                                </a>
+                                <div class="card-title text-uppercase">{{ program.title }}</div>
+                                {# Inclure le composant watchlist pour chaque programme #}
+                                {{ component ('WatchList' , {'program': program})}}
+                            </div>
+                        {% endfor %}
                     {% else %}
                         <p>No programs found for category: {{ category }}.</p>
-                    {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

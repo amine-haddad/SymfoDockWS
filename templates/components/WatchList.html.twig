@@ -1,0 +1,26 @@
+{# templates/components/WatchList.html.twig #}
+{% if app.user %}
+
+<div {{ attributes }} >
+    <button
+        type="button"
+        class="{{ app.user and app.user.watchlist.contains(program) ? 'btn text-danger' : 'btn ' }}"
+        data-program-id="{{ program.id }}"
+        data-action="live#action"
+        data-live-action-param="WatchList|toggleWatchList"
+    >
+        {% if app.user and app.user.watchlist.contains(program) %}
+    <i class="bi bi-heart-fill text-danger"></i>
+        {% else %}
+    <i class="bi bi-heart "></i>
+        {% endif %}
+    </button>
+</div>
+
+{% else %}
+<div class="">
+        <a href="{{ path('app_login') }}" class="nav-link active" aria-current="page">
+            <i class="bi bi-person-fill">
+            </i></a>
+</div>
+{% endif %}

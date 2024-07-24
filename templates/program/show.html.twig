@@ -10,6 +10,7 @@
             <div class="col-md-4">
                 <!-- Display the program's image with alt attribute set to program title -->
                 <img src="{{ vich_uploader_asset(program, 'posterFile')| imagine_filter('poster_thumbnail') }}" class="img-fluid rounded mb-2" alt="{{ program.title }}">
+                
             </div>
             <div class="col-md-8">
                 <h1 class="text-uppercase text-decoration-underline">{{ program.title }}</h1>
@@ -42,21 +43,23 @@
                 <p>Acteurs :</p>
                 <div class="row">
                     {% for actor in program.actors %}
-                        <div class="card_actors col-2 m-2 justify-content-between">
-                            <div class="card_actor p-2 mx-auto">
-                                <a href="{{ path('actor_show', {'slug': actor.slug}) }}" class="">
+                    <div class="card-group col-2">
+
+                    <a href="{{ path('actor_show', {'slug': actor.slug}) }}" class="mx-auto">
+                        <div class="card p-4">
                                 {% if actor.photo is not empty  %}
                                 <img src="{{ vich_uploader_asset(actor, 'photoFile')| imagine_filter('actor_thumbnail') }}" alt="photo_actor_{{ actor.name }}" class="img-fluid rounded_actor">
                                 {% else %}
                                 <img src="{{ vich_uploader_asset(actor, 'photoFile') }}" alt="photo_actor_{{ actor.name }}" class="img-fluid rounded_actor">  
-                            {% endif %}
+                                {% endif %}
                                 
-                                </a>
-                            </div>
-                            <div class="card-title text-uppercase text-center">
-                                    <strong>{{ actor.name }}</strong>
-                            </div>
+                                
+                            <h5 class="align-text-bottom text-center">{{ actor.name }}</h5>
+                            
+                            
                         </div>
+                    </a>
+                    </div>
                     {% else %}
                         <div>Aucun acteur pour cette série</div>
                     {% endfor %}

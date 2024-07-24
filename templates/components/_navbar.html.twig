@@ -6,18 +6,18 @@
                 <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
             </div>
         </form>
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="{{ path('app_index') }}">Wild Series</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    <a class="nav-link active" aria-current="page" href="{{ path('program_index') }}">Séries</a>
                 </li>
                 {{ component('Navbar') }}
                 <li class="nav-item">
-                    <a class="nav-link" href="#" {{ stimulus_action('theme', 'toggleDarkMode') }}>Dark Mode</a>
+                    <a class="nav-link" href="#" {{ stimulus_action('theme', 'toggleDarkMode') }}>Dark Mode <i class="bi bi-moon-fill"></i></a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -47,6 +47,9 @@
                     
                 </li>
             </ul>
+            {% if app.user and app.user.watchlist is not empty %}
+    <a  href="{{ path('watchlist') }}" class="btn btn-secondary text-lowercase text-center">Voir ma Watch List</a>
+    {% endif %}
             <form class="d-flex" role="search">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>

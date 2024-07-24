@@ -7,6 +7,8 @@ import './bootstrap.js';
  */
 import './styles/app.scss';
 
+
+
 /**
  * Import Bootstrap JavaScript library.
  * This library provides the necessary JavaScript functionality for Bootstrap components.
@@ -14,6 +16,7 @@ import './styles/app.scss';
  * @see {@link https://getbootstrap.com/docs/5.0/getting-started/javascript/|Bootstrap JavaScript Documentation}
  */
 import 'bootstrap';
+
 
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
 document.addEventListener('DOMContentLoaded', function() {

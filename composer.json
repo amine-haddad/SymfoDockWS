@@ -50,6 +50,7 @@
         "symfonycasts/sass-bundle": "^0.7.0",
         "symfonycasts/verify-email-bundle": "^1.17",
         "twbs/bootstrap": "^5.3",
+        "twbs/bootstrap-icons": "^1.11",
         "twig/extra-bundle": "^3.10",
         "twig/inky-extra": "^3.10",
         "twig/twig": "^2.12|^3.0",

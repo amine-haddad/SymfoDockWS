@@ -3,11 +3,9 @@
 <container>
 <row>
     <columns>
-        <h1>Nouvel Épisode Disponible</h1>
-        <p>"Un nouvel épisode passionnant vient d'être publié. Ne le manquez pas !"</p>
-        <callout class="primary">
-    <a href="{{ path('app_episode_show', {'slugy': episode.slug}) }}">Voir l'épisode</a>
-        </callout>
+        <h1>Nouvel Épisode {{ episode.title }} Disponible</h1>
+        <p>{{ episode.synopsis }}</p>
+        
     </columns>
 </row>
 
@@ -17,7 +15,7 @@
     <columns>
         <p>Retrouvez d'autres épisodes passionnants et découvrez plus sur notre plateforme.</p>
         <callout class="secondary">
-            <a href="{{  path('app_episode_index') }}">Visitez notre site</a>
+            <a href="{{  url('app_index') }}">Visitez notre site</a>
         </callout>
     </columns>
 </row>

@@ -1,0 +1,27 @@
+language: php
+
+php:
+  - 7.4
+  - 8.0
+  - 8.1
+
+services:
+  - mysql
+
+env:
+  global:
+    - SYMFONY_DEPRECATIONS_HELPER=weak_vendors
+    - DATABASE_URL=mysql://root:@127.0.0.1/test
+
+before_install:
+  - phpenv config-rm xdebug.ini
+
+install:
+  - composer install
+
+before_script:
+  - mysql -e 'CREATE DATABASE test;'
+  - php bin/console doctrine:schema:update --force
+
+script:
+  - php bin/phpunit

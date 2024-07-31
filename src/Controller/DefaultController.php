@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 //src/Controller/DefaultController.php
 namespace App\Controller;
 

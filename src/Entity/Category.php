@@ -6,10 +6,12 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Assert\EnableAutoMapping]
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[UniqueEntity('name')]
 class Category
 {
     #[ORM\Id]
@@ -72,9 +74,13 @@ class Category
     }
     public function removeProgram(Program $program): self
     {
-        if (!$this->programs->contains($program)) {
-            $this->programs->add($program);
-            $program->setCategory($this);
+        if ($this->programs->contains($program)) {
+            $this->programs->removeElement($program);
+            // Si vous avez besoin de gérer la relation dans l'entité Program
+            // Assurez-vous que la méthode `setCategory` dans Program est correcte pour gérer ce changement
+            if ($program->getCategory() === $this) {
+                $program->setCategory(null);
+            }
         }
 
         return $this;

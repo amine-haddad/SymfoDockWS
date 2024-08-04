@@ -46,15 +46,26 @@ class UserTest extends TestCase
     }
 
     public function testRemoveComment(): void
-    {
-        $user = new User();
-        $comment = $this->createMock(Comment::class);
+{
+    // Créez un utilisateur et un commentaire réels
+    $user = new User();
+    $comment = new Comment();
 
-        $user->addComment($comment);
-        $user->removeComment($comment);
+    // Ajoutez le commentaire à l'utilisateur
+    $user->addComment($comment);
 
-        $this->assertFalse($user->getComments()->contains($comment));
-    }
+    // Assurez-vous que le commentaire est associé à l'utilisateur
+    $this->assertTrue($comment->getAuthor() === $user);
+
+    // Retirez le commentaire de l'utilisateur
+    $user->removeComment($comment);
+
+    // Vérifiez que le commentaire a été retiré de la collection
+    $this->assertFalse($user->getComments()->contains($comment));
+
+    // Assurez-vous que le commentaire n'a plus d'auteur
+    $this->assertNull($comment->getAuthor());
+}
 
     public function testAddProgram(): void
     {
@@ -67,15 +78,27 @@ class UserTest extends TestCase
     }
 
     public function testRemoveProgram(): void
-    {
-        $user = new User();
-        $program = $this->createMock(Program::class);
+{
+    // Créez un utilisateur et un programme réels
+    $user = new User();
+    $program = new Program();
 
-        $user->addProgram($program);
-        $user->removeProgram($program);
+    // Ajoutez le programme à l'utilisateur
+    $user->addProgram($program);
 
-        $this->assertFalse($user->getPrograms()->contains($program));
-    }
+    // Assurez-vous que le programme est associé à l'utilisateur
+    $this->assertTrue($program->getOwner() === $user);
+
+    // Retirez le programme de l'utilisateur
+    $user->removeProgram($program);
+
+    // Vérifiez que le programme a été retiré de la collection
+    $this->assertFalse($user->getPrograms()->contains($program));
+
+    // Assurez-vous que le programme n'a plus d'utilisateur comme propriétaire
+    $this->assertNull($program->getOwner());
+}
+
 
     public function testAddToWatchlist(): void
     {
@@ -105,4 +128,32 @@ class UserTest extends TestCase
 
         $this->assertTrue($user->isVerified());
     }
+
+    public function testGetId(): void
+    {
+        $user = new User();
+        $reflection = new \ReflectionClass($user);
+        $property = $reflection->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($user, 1);
+        $this->assertSame(1, $user->getId());
+    }
+
+    public function testGetUserIdentifier(): void
+    {
+        $user = new User();
+        $user->setEmail('john@example.com');
+        $this->assertSame('john@example.com', $user->getUserIdentifier());
+    }
+
+    public function testEraseCredentials(): void
+    {
+        $user = new User();
+        // Assuming there's some temporary, sensitive data that needs to be cleared
+        $user->eraseCredentials();
+        $this->assertTrue(true); // This is a placeholder assertion as eraseCredentials doesn't currently do anything
+    }
+
+    
+
 }

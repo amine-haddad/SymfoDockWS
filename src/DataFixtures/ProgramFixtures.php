@@ -32,6 +32,8 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
             $program->setCategory($this->getReference('category_' . $faker->numberBetween(1, 15)));
             $program->setPoster($faker->imageUrl(640, 480, 'cinema'));
 
+            // Set the updatedAt field to the current datetime
+            $program->setUpdatedAt(new \DateTime());
             // Assign a random owner from the users
             $userReference = $faker->randomElement(['user_contributor', 'user_admin']);
             $program->setOwner($this->getReference($userReference));

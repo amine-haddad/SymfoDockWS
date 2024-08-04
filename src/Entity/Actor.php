@@ -5,14 +5,21 @@ namespace App\Entity;
 use App\Repository\ActorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
 
 #[ORM\Entity(repositoryClass: ActorRepository::class)]
 #[Assert\EnableAutoMapping]
-#[Vich\Uploadable] 
+#[Vich\Uploadable]
+#[UniqueEntity(
+    message: 'Ce nom existe dans la liste des Acteurs.',
+    fields: ['name']
+
+)]
 class Actor
 {
     #[ORM\Id]
@@ -42,6 +49,9 @@ class Actor
      */
     #[ORM\ManyToMany(targetEntity: Program::class, mappedBy: 'actors')]
     private Collection $programs;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $updatedAt = null;
 
     public function __construct()
     {
@@ -126,6 +136,18 @@ class Actor
         if ($this->programs->removeElement($program)) {
             $program->removeActor($this);
         }
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

@@ -27,6 +27,11 @@ class ActorFixtures extends Fixture implements DependentFixtureInterface
             $actor->setName($this->faker->name());
             $slugName = $this->slugger->slug($actor->getName());
             $actor->setSlug($slugName);
+            // Initialisation du champ updatedAt
+            $actor->setUpdatedAt(new \DateTimeImmutable());
+            // Génération d'un nom de fichier photo aléatoire
+            $photoName = $this->faker->image('public/uploads/images/photo', 640, 480, 'people', false);
+            $actor->setPhoto($photoName);
             $manager->persist($actor);
     
             // Ajout de l'acteur à un ou plusieurs programmes

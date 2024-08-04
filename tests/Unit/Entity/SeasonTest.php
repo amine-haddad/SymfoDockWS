@@ -2,12 +2,22 @@
 
 namespace App\Tests\Unit\Entity;
 
+use App\Entity\Episode;
 use App\Entity\Season;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
 class SeasonTest extends TestCase
 {
+    public function testGetId(): void
+    {
+        $season = new Season();
+        $reflection = new \ReflectionClass($season);
+        $property = $reflection->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($season, 1);
+        $this->assertSame(1, $season->getId());
+    }
     public function testConstructorInitializesEpisodesCollection(): void
     {
         $season = new Season();
@@ -46,18 +56,30 @@ class SeasonTest extends TestCase
     public function testAddEpisodes(): void
     {
         $season = new Season();
-        $episode = $this->createMock(\App\Entity\Episode::class);
+        $episode = $this->createMock(Episode::class);
         $season->addEpisode($episode);
         $this->assertTrue($season->getEpisodes()->contains($episode));
     }
 
-    public function testRemoveEpisodes(): void
+    public function testRemoveEpisode()
     {
+        // Créer une instance de Season
         $season = new Season();
-        $episode = $this->createMock(\App\Entity\Episode::class);
+
+        // Créer une instance d'Episode
+        $episode = new Episode();
+        
+        // Associer l'Episode à la Season
         $season->addEpisode($episode);
+
+        // Assurer que l'Episode est bien associé à la Season
+        $this->assertSame($season, $episode->getSeason());
+
+        // Appeler la méthode removeEpisode
         $season->removeEpisode($episode);
-        $this->assertFalse($season->getEpisodes()->contains($episode));
+
+        // Vérifier que la Season de l'Episode est null
+        $this->assertNull($episode->getSeason());
     }
 
 }

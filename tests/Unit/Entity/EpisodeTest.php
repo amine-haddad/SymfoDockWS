@@ -2,9 +2,12 @@
 
 namespace App\Tests\Unit\Entity;
 
-use App\Entity\Episode;
 use App\Entity\Comment;
+use App\Entity\Episode;
+use App\Entity\Program;
+use App\Entity\Season;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use PHPUnit\Framework\TestCase;
 
 class EpisodeTest extends TestCase
@@ -61,11 +64,40 @@ class EpisodeTest extends TestCase
         $comment = new Comment();
         $comment->setComment('Test Comment');
 
+        // Ajouter le commentaire à l'épisode
         $this->episode->addComment($comment);
+
+        // Vérifier que le commentaire est bien ajouté
+        $this->assertCount(1, $this->episode->getComments());
+        $this->assertTrue($this->episode->getComments()->contains($comment));
+
+        // Retirer le commentaire
         $this->episode->removeComment($comment);
 
+        // Vérifier que le commentaire est bien retiré
         $this->assertCount(0, $this->episode->getComments());
         $this->assertFalse($this->episode->getComments()->contains($comment));
-        $this->assertNull($comment->getEpisode());
+        $this->assertNull($comment->getEpisode()); // Vérifie que la relation a été mise à jour
+    }
+
+    public function testSetSeason(): void
+    {
+        $season = new Season(); // Assurez-vous que Season est correctement défini
+        $this->episode->setSeason($season);
+
+        $this->assertSame($season, $this->episode->getSeason());
+    }
+
+    public function testSetSeasonWithProgram(): void
+    {
+        $program = new Program(); // Assurez-vous que Program est correctement défini
+        $season = new Season();
+        $season->setProgram($program); // Exemple de relation, ajustez selon votre entité
+
+        $this->episode->setSeason($season);
+
+        $seasons = $program->getSeasons();
+        $this->assertInstanceOf(Collection::class, $seasons);
+
     }
 }

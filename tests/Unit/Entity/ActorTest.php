@@ -5,7 +5,7 @@ namespace App\Tests\Unit\Entity;
 use App\Entity\Actor;
 use App\Entity\Program;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Tests\Fake\FakeFile;
 
 class ActorTest extends TestCase
@@ -25,6 +25,7 @@ class ActorTest extends TestCase
         $this->assertNull($this->actor->getPhotoFile());
         $this->assertNull($this->actor->getSlug());
         $this->assertEmpty($this->actor->getPrograms());
+        $this->assertNull($this->actor->getUpdatedAt());
     }
 
     public function testSettersAndGetters(): void
@@ -32,6 +33,7 @@ class ActorTest extends TestCase
         $this->actor->setName('Test Actor');
         $this->actor->setPhoto('test-photo.jpg');
         $this->actor->setSlug('test-slug');
+    
 
         // Testing getter methods
         $this->assertEquals('Test Actor', $this->actor->getName());
@@ -44,6 +46,11 @@ class ActorTest extends TestCase
         // Testing setting a null file
         $this->actor->setPhotoFile(null);
         $this->assertNull($this->actor->getPhotoFile());
+
+        // Testing the updatedAt property
+        $now = new \DateTime();
+        $this->actor->setUpdatedAt($now);
+        $this->assertEquals($now, $this->actor->getUpdatedAt());
     }
 
     public function testAddAndRemoveProgram(): void
@@ -58,5 +65,32 @@ class ActorTest extends TestCase
 
         $this->assertCount(0, $this->actor->getPrograms());
         $this->assertFalse($this->actor->getPrograms()->contains($program));
+    }
+
+    public function testSetPhotoFile(): void
+    {
+        $filePath = __DIR__ . '/test.jpg';
+        touch($filePath);  // Crée un fichier vide pour les besoins du test
+
+        $file = new UploadedFile(
+            $filePath,
+            'test.jpg',
+            'image/jpeg',
+            null,
+            true
+        );
+
+        $this->actor->setPhotoFile($file);
+
+        $this->assertSame($file, $this->actor->getPhotoFile());
+
+        // Verifying that updatedAt is set
+        $this->assertInstanceOf(\DateTime::class, $this->actor->getUpdatedAt());
+
+        // Testing setting a null file
+        $this->actor->setPhotoFile(null);
+        $this->assertNull($this->actor->getPhotoFile());
+
+        unlink($filePath);  // Supprime le fichier après le test
     }
 }

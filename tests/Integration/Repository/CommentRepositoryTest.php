@@ -5,11 +5,13 @@ namespace App\Tests\Integration\Repository;
 use App\Entity\Comment;
 use App\Entity\Episode;
 use App\Entity\User;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class CommentRepositoryTest extends KernelTestCase
 {
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
     private $commentRepository;
     private $userRepository;
     private $episodeRepository;
@@ -27,6 +29,9 @@ class CommentRepositoryTest extends KernelTestCase
         $this->commentRepository = $this->entityManager->getRepository(Comment::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
         $this->episodeRepository = $this->entityManager->getRepository(Episode::class);
+
+        // Commence une transaction
+        $this->entityManager->beginTransaction();
     }
 
     /**
@@ -35,9 +40,15 @@ class CommentRepositoryTest extends KernelTestCase
      */
     protected function tearDown(): void
     {
-        parent::tearDown();
+        if ($this->entityManager->getConnection()->isTransactionActive()) {
+            // Rollback la transaction si elle est active
+            $this->entityManager->rollback();
+        }
+
         $this->entityManager->close();
-        $this->entityManager = null;
+        
+
+        parent::tearDown();
     }
 
     /**

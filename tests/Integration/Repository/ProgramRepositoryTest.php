@@ -58,7 +58,7 @@ class ProgramRepositoryTest extends KernelTestCase
 
         // Effectuer le test avec un nom d'acteur aléatoire
         $result = $this->programRepository->findLikeName($randomActorName);
-        $this->assertGreaterThan(0, count($result), "No results found for the random actor name: $randomActorName");
+        $this->assertGreaterThan(1, count($result), "No results found for the random actor name: $randomActorName");
 
         // Test avec un mot clé qui devrait retourner plusieurs résultats (ajuste le mot clé selon tes données)
         //$keyword = 'voluptas'; // Exemple de mot clé
